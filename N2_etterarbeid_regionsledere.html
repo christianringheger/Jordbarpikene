@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>N2-møte — Etterarbeid regionsledere</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream: #FAF8F4;
+  --ink: #1A1714;
+  --ink-light: #6B6560;
+  --ink-faint: #C4BFB8;
+  --orange: #E8622A;
+  --orange-light: #FDF0E9;
+  --orange-mid: #F4A97A;
+  --red: #C0392B;
+  --red-light: #FCECEA;
+  --amber: #D4760A;
+  --amber-light: #FDF3E3;
+  --green: #2E7D32;
+  --green-light: #EBF5EC;
+  --nw: #1B4F8A;
+  --nw-light: #E8F0FA;
+  --mid: #2A6B3C;
+  --mid-light: #E8F5EC;
+  --ost: #6B2D8A;
+  --ost-light: #F3EAF9;
+  --border: #EAE5DF;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.site-header {
+  background: var(--ink);
+  padding: 2.5rem 2rem 2rem;
+  position: relative;
+  overflow: hidden;
+}
+.site-header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  background: var(--orange);
+  opacity: 0.12;
+}
+.header-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--orange-mid);
+  margin-bottom: 8px;
+}
+.header-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(24px, 4vw, 36px);
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+.header-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.meta-tag {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.15);
+  color: rgba(255,255,255,.7);
+}
+.meta-tag.hot { border-color: var(--orange); color: var(--orange-mid); background: rgba(232,98,42,.1); }
+
+/* ── Nav ── */
+.reg-nav {
+  display: flex;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  overflow-x: auto;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.reg-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 14px 20px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: var(--ink-light);
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all .2s;
+}
+.reg-btn:hover { color: var(--ink); }
+.reg-btn.active { color: var(--ink); border-bottom-color: var(--orange); }
+
+/* ── Container ── */
+.container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+/* ── Region view ── */
+.reg-view { display: none; }
+.reg-view.active { display: block; }
+
+/* ── Region hero ── */
+.reg-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem 1.75rem;
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.reg-hero.nw { background: var(--nw-light); border-left: 4px solid var(--nw); }
+.reg-hero.midt { background: var(--mid-light); border-left: 4px solid var(--mid); }
+.reg-hero.ost { background: var(--ost-light); border-left: 4px solid var(--ost); }
+.reg-hero-left h2 { font-family: 'DM Serif Display', serif; font-size: 22px; }
+.reg-hero-left p { font-size: 13px; color: var(--ink-light); margin-top: 2px; }
+.neg-count {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--red-light);
+  color: var(--red);
+}
+
+/* ── Negative chips ── */
+.neg-section { margin-bottom: 1.75rem; }
+.neg-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-bottom: 10px;
+}
+.neg-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: var(--red-light);
+  color: var(--red);
+}
+
+/* ── Two column ── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.5rem; }
+@media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ── Card ── */
+.card {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+}
+.card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  margin-bottom: 1rem;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.dot-vk { background: var(--red); }
+.dot-pk { background: var(--amber); }
+
+/* ── Avdeling row ── */
+.avd-row {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.avd-row:last-child { border-bottom: none; }
+.avd-row.both {
+  background: var(--amber-light);
+  margin: 0 -1.25rem;
+  padding: 10px 1.25rem;
+  border-bottom: 1px solid #F5DDB0;
+}
+.avd-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+.avd-name { font-size: 15px; font-weight: 600; }
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 8px;
+  letter-spacing: .03em;
+}
+.b-both { background: var(--amber-light); color: var(--amber); border: 1px solid #E8C97A; }
+.b-nw { background: var(--nw-light); color: var(--nw); }
+.b-mid { background: var(--mid-light); color: var(--mid); }
+.b-ost { background: var(--ost-light); color: var(--ost); }
+
+.nums { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.num { background: var(--cream); border-radius: 8px; padding: 7px 8px; }
+.num-label { font-size: 10px; color: var(--ink-light); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.num-val { font-size: 13px; font-weight: 600; }
+.v-red { color: var(--red); }
+.v-amber { color: var(--amber); }
+.v-green { color: var(--green); }
+.v-muted { color: var(--ink-light); }
+
+/* ── Action area ── */
+.action-area {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border);
+}
+.action-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.action-head-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+}
+.deadline {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nw);
+  background: var(--nw-light);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+.action-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.action-row:last-child { border-bottom: none; padding-bottom: 0; }
+.action-avd { font-size: 14px; font-weight: 600; }
+.action-sub { font-size: 12px; color: var(--ink-light); margin-top: 2px; }
+.status-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px dashed var(--ink-faint);
+  background: none;
+  cursor: pointer;
+  color: var(--ink-light);
+  transition: all .2s;
+  white-space: nowrap;
+}
+.status-btn:hover { border-color: var(--orange); color: var(--orange); }
+.status-btn.done {
+  border-style: solid;
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-light);
+}
+
+/* ── Footer ── */
+.page-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--ink-light);
+  text-align: center;
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-label">Jordbærpikene · N2-møte</div>
+  <h1 class="header-title">Etterarbeid — Nøkkeltall per region</h1>
+  <div class="header-meta">
+    <span class="meta-tag">Aprilregnskap 2026</span>
+    <span class="meta-tag">Varekost og perskost</span>
+    <span class="meta-tag">Kun avdelinger med negativt resultat feb–apr</span>
+    <span class="meta-tag hot">Effekt forventet: juniregnskapet</span>
+  </div>
+</header>
+
+<nav class="reg-nav">
+  <button class="reg-btn active" onclick="showReg('nw',this)">NW — Siri · 11 avd.</button>
+  <button class="reg-btn" onclick="showReg('midt',this)">Midt — Tonje · 7 avd.</button>
+  <button class="reg-btn" onclick="showReg('ost',this)">Øst — Øyvind · 10 avd.</button>
+</nav>
+
+<div class="container">
+
+<!-- ========== NW ========== -->
+<div id="reg-nw" class="reg-view active">
+  <div class="reg-hero nw">
+    <div class="reg-hero-left">
+      <h2>Region NW</h2>
+      <p>Regionsleder: Siri — ansvarlig for følgekontroll</p>
+    </div>
+    <span class="neg-count">11 avdelinger i minus</span>
+  </div>
+
+  <div class="neg-section">
+    <div class="neg-title">Alle med negativt resultat feb–apr (sum)</div>
+    <div class="neg-chips">
+      <span class="chip">Sandens −329k</span>
+      <span class="chip">Kvadrat −308k</span>
+      <span class="chip">Lagunen −269k</span>
+      <span class="chip">Lofoten −216k</span>
+      <span class="chip">Bergen Stor. −210k</span>
+      <span class="chip">Bryne −129k</span>
+      <span class="chip">Svolvær −103k</span>
+      <span class="chip">Jærhagen −98k</span>
+      <span class="chip">Åsane −91k</span>
+      <span class="chip">Narvik −77k</span>
+      <span class="chip">Kanebogen −3k</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-head"><span class="dot dot-vk"></span>Varekost — topp 3 gap</div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Jærhagen</span><span class="badge b-nw">NW</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt VK</div><div class="num-val v-red">35,0%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">30,5%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+4,5pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+25k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−98k</div></div>
+        </div>
+      </div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Kvadrat</span><span class="badge b-nw">NW</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt VK</div><div class="num-val v-red">33,0%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">28,5%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+4,5pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+27k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−308k</div></div>
+        </div>
+      </div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Narvik</span><span class="badge b-nw">NW</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt VK</div><div class="num-val v-amber">30,8%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">27,2%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-amber">+3,6pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-amber">+26k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−77k</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="dot dot-pk"></span>Perskost — topp 3 gap</div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Lagunen</span><span class="badge b-nw">NW</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt PK</div><div class="num-val v-red">39,7%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">32,3%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+7,4pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+51k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−269k</div></div>
+        </div>
+      </div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Lofoten</span><span class="badge b-nw">NW</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt PK</div><div class="num-val v-red">46,4%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">40,4%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+6,0pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+28k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−216k</div></div>
+        </div>
+      </div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Bergen Stor.</span><span class="badge b-nw">NW</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt PK</div><div class="num-val v-amber">37,3%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">32,3%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-amber">+5,0pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-amber">+42k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−210k</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-area">
+    <div class="action-head">
+      <span class="action-head-label">Forpliktelse per avdeling</span>
+      <span class="deadline">Frist: juniregnskapet</span>
+    </div>
+    <div class="action-row"><div><div class="action-avd">Jærhagen — varekost</div><div class="action-sub">Mål 30,5% · Lukke 4,5pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Kvadrat — varekost</div><div class="action-sub">Mål 28,5% · Lukke 4,5pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Narvik — varekost</div><div class="action-sub">Mål 27,2% · Lukke 3,6pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Lagunen — perskost</div><div class="action-sub">Mål 32,3% · Lukke 7,4pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Lofoten — perskost</div><div class="action-sub">Mål 40,4% · Lukke 6,0pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Bergen Stor. — perskost</div><div class="action-sub">Mål 32,3% · Lukke 5,0pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+  </div>
+</div>
+
+<!-- ========== MIDT ========== -->
+<div id="reg-midt" class="reg-view">
+  <div class="reg-hero midt">
+    <div class="reg-hero-left">
+      <h2>Region Midt</h2>
+      <p>Regionsleder: Tonje — ansvarlig for følgekontroll</p>
+    </div>
+    <span class="neg-count">7 avdelinger i minus</span>
+  </div>
+
+  <div class="neg-section">
+    <div class="neg-title">Alle med negativt resultat feb–apr (sum)</div>
+    <div class="neg-chips">
+      <span class="chip">Røros −283k</span>
+      <span class="chip">Solsiden −218k</span>
+      <span class="chip">Storkaia −201k</span>
+      <span class="chip">Tiller −123k</span>
+      <span class="chip">Steinkjer −99k</span>
+      <span class="chip">Lade −73k</span>
+      <span class="chip">Roseby −53k</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-head"><span class="dot dot-vk"></span>Varekost — topp 3 gap</div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Røros</span><span class="badge b-mid">Midt</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt VK</div><div class="num-val v-amber">30,6%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">28,5%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-amber">+2,1pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-amber">+13k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−283k</div></div>
+        </div>
+      </div>
+      <div class="avd-row both">
+        <div class="avd-top"><span class="avd-name">Steinkjer</span><span class="badge b-mid">Midt</span><span class="badge b-both">VK + PK</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt VK</div><div class="num-val v-amber">29,0%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">27,0%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-amber">+2,0pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-amber">+17k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−99k</div></div>
+        </div>
+      </div>
+      <div class="avd-row both">
+        <div class="avd-top"><span class="avd-name">Roseby</span><span class="badge b-mid">Midt</span><span class="badge b-both">VK + PK</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt VK</div><div class="num-val v-amber">28,8%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">27,0%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-amber">+1,8pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-amber">+16k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−53k</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="dot dot-pk"></span>Perskost — topp 3 gap</div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Storkaia</span><span class="badge b-mid">Midt</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt PK</div><div class="num-val v-red">43,7%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">35,0%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+8,7pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+51k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−201k</div></div>
+        </div>
+      </div>
+      <div class="avd-row both">
+        <div class="avd-top"><span class="avd-name">Steinkjer</span><span class="badge b-mid">Midt</span><span class="badge b-both">VK + PK</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt PK</div><div class="num-val v-red">37,1%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">31,0%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+6,1pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+52k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−99k</div></div>
+        </div>
+      </div>
+      <div class="avd-row both">
+        <div class="avd-top"><span class="avd-name">Roseby</span><span class="badge b-mid">Midt</span><span class="badge b-both">VK + PK</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt PK</div><div class="num-val v-red">38,3%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">32,3%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+6,0pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+51k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−53k</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-area">
+    <div class="action-head">
+      <span class="action-head-label">Forpliktelse per avdeling</span>
+      <span class="deadline">Frist: juniregnskapet</span>
+    </div>
+    <div class="action-row"><div><div class="action-avd">Røros — varekost</div><div class="action-sub">Mål 28,5% · Lukke 2,1pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Steinkjer — varekost + perskost</div><div class="action-sub">VK-mål 27,0% (+2,0pp) · PK-mål 31,0% (+6,1pp)</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Roseby — varekost + perskost</div><div class="action-sub">VK-mål 27,0% (+1,8pp) · PK-mål 32,3% (+6,0pp)</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Storkaia — perskost</div><div class="action-sub">Mål 35,0% · Lukke 8,7pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+  </div>
+</div>
+
+<!-- ========== ØST ========== -->
+<div id="reg-ost" class="reg-view">
+  <div class="reg-hero ost">
+    <div class="reg-hero-left">
+      <h2>Region Øst</h2>
+      <p>Regionsleder: Øyvind — ansvarlig for følgekontroll</p>
+    </div>
+    <span class="neg-count">10 avdelinger i minus</span>
+  </div>
+
+  <div class="neg-section">
+    <div class="neg-title">Alle med negativt resultat feb–apr (sum)</div>
+    <div class="neg-chips">
+      <span class="chip">Lørenskog −332k</span>
+      <span class="chip">Tista −275k</span>
+      <span class="chip">Vinterbro −139k</span>
+      <span class="chip">Gulskogen −107k</span>
+      <span class="chip">Hamar −94k</span>
+      <span class="chip">Strømmen −59k</span>
+      <span class="chip">Torget −51k</span>
+      <span class="chip">Tveita −34k</span>
+      <span class="chip">Mosseporten −32k</span>
+      <span class="chip">Buskerud −19k</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-head"><span class="dot dot-vk"></span>Varekost — topp 3 gap</div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Strømmen</span><span class="badge b-ost">Øst</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt VK</div><div class="num-val v-red">32,3%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">27,2%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+5,1pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+31k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−59k</div></div>
+        </div>
+      </div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Vinterbro</span><span class="badge b-ost">Øst</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt VK</div><div class="num-val v-red">31,9%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">27,2%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+4,7pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+32k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−139k</div></div>
+        </div>
+      </div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Mosseporten</span><span class="badge b-ost">Øst</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt VK</div><div class="num-val v-amber">29,0%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">27,0%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-amber">+2,0pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-amber">+17k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−32k</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><span class="dot dot-pk"></span>Perskost — topp 3 gap</div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Hamar</span><span class="badge b-ost">Øst</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt PK</div><div class="num-val v-red">35,5%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">31,0%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+4,5pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+45k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−94k</div></div>
+        </div>
+      </div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Lørenskog</span><span class="badge b-ost">Øst</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt PK</div><div class="num-val v-red">39,4%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">35,0%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+4,4pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+26k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−332k</div></div>
+        </div>
+      </div>
+      <div class="avd-row">
+        <div class="avd-top"><span class="avd-name">Tista</span><span class="badge b-ost">Øst</span></div>
+        <div class="nums">
+          <div class="num"><div class="num-label">Snitt PK</div><div class="num-val v-red">44,4%</div></div>
+          <div class="num"><div class="num-label">Mål</div><div class="num-val v-muted">40,4%</div></div>
+          <div class="num"><div class="num-label">Gap</div><div class="num-val v-red">+4,0pp</div></div>
+          <div class="num"><div class="num-label">Kr/mnd</div><div class="num-val v-red">+18k</div></div>
+          <div class="num"><div class="num-label">Res. 3mnd</div><div class="num-val v-red">−275k</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-area">
+    <div class="action-head">
+      <span class="action-head-label">Forpliktelse per avdeling</span>
+      <span class="deadline">Frist: juniregnskapet</span>
+    </div>
+    <div class="action-row"><div><div class="action-avd">Strømmen — varekost</div><div class="action-sub">Mål 27,2% · Lukke 5,1pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Vinterbro — varekost</div><div class="action-sub">Mål 27,2% · Lukke 4,7pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Mosseporten — varekost</div><div class="action-sub">Mål 27,0% · Lukke 2,0pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Hamar — perskost</div><div class="action-sub">Mål 31,0% · Lukke 4,5pp</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Lørenskog — perskost</div><div class="action-sub">Mål 35,0% · Lukke 4,4pp · Res. −332k</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+    <div class="action-row"><div><div class="action-avd">Tista — perskost</div><div class="action-sub">Mål 40,4% · Lukke 4,0pp · Res. −275k</div></div><button class="status-btn" onclick="toggleDone(this)">Registrer tiltak</button></div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<footer class="page-footer">
+  Jordbærpikene · N2-møte mai 2026 · Kilde: aprilregnskap og S12m
+</footer>
+
+<script>
+function showReg(id, el) {
+  document.querySelectorAll('.reg-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.reg-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('reg-' + id).classList.add('active');
+  el.classList.add('active');
+}
+function toggleDone(btn) {
+  btn.classList.toggle('done');
+  btn.textContent = btn.classList.contains('done') ? '✓ Notert' : 'Registrer tiltak';
+}
+</script>
+</body>
+</html>
