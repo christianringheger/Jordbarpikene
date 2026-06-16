@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nyåpninger – Bitastad</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&display=swap');
+:root{--red:#da2a1c;--cream:#f5f5ea;--black:#000;--green:#708573;--gl:#e8e8dc;--gm:#c8c8bc;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--black);}
+.hdr{background:var(--red);padding:22px 40px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.hdr-left{flex:1;}
+.hdr-eye{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:4px;}
+.hdr-title{font-size:24px;font-weight:500;color:#fff;}
+.hdr-sub{font-size:13px;color:rgba(255,255,255,.7);margin-top:4px;}
+.berry{width:48px;opacity:.9;flex-shrink:0;}
+.back-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;border-radius:6px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.back-btn:hover{background:rgba(255,255,255,.25);}
+.ftr{background:var(--green);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;}
+.ftr-text{font-size:12px;color:rgba(255,255,255,.75);}
+.ftr-brand{font-size:12px;font-weight:500;color:#fff;}
+#view-dashboard{display:block;}
+#view-detail{display:none;}
+.dash-toolbar{background:#fff;border-bottom:1px solid var(--gl);padding:16px 40px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.dash-summary{font-size:13px;color:#666;}
+.new-btn{background:var(--red);color:#fff;border:none;border-radius:6px;padding:9px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px;margin-left:auto;}
+.new-btn:hover{opacity:.88;}
+.dash-grid{padding:28px 40px 60px;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.opening-card{background:#fff;border:1px solid var(--gl);border-radius:10px;padding:18px 20px;cursor:pointer;transition:border-color .15s,box-shadow .15s;position:relative;}
+.opening-card:hover{border-color:var(--gm);box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.oc-brand{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:#999;margin-bottom:6px;}
+.oc-name{font-size:16px;font-weight:500;color:var(--black);margin-bottom:4px;}
+.oc-date{font-size:12px;color:#777;margin-bottom:14px;}
+.oc-progress{height:4px;background:var(--gl);border-radius:99px;overflow:hidden;margin-bottom:8px;}
+.oc-bar{height:100%;background:var(--red);border-radius:99px;transition:width .3s;}
+.oc-stats{display:flex;align-items:center;justify-content:space-between;}
+.oc-pct{font-size:12px;font-weight:500;color:var(--red);}
+.oc-count{font-size:11px;color:#999;}
+.oc-status{display:inline-block;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:99px;margin-bottom:10px;}
+.status-upcoming{background:#e8f0fa;color:#1a6faf;}
+.status-active{background:#fdeaea;color:#a31a1a;}
+.status-done{background:#eaf3e8;color:#2a6a1a;}
+.oc-delete{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;color:#ccc;font-size:16px;line-height:1;padding:2px 5px;border-radius:4px;}
+.oc-delete:hover{color:var(--red);background:#fdeaea;}
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;}
+.empty-icon{font-size:40px;margin-bottom:14px;opacity:.3;}
+.empty-title{font-size:16px;font-weight:500;color:#888;margin-bottom:6px;}
+.empty-sub{font-size:13px;color:#aaa;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:12px;padding:28px;width:100%;max-width:420px;margin:20px;}
+.modal-title{font-size:18px;font-weight:500;margin-bottom:20px;}
+.mf-label{display:block;font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#666;margin-bottom:5px;}
+.mf-input{width:100%;border:1.5px solid var(--gm);border-radius:6px;padding:9px 12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--black);background:var(--cream);outline:none;margin-bottom:14px;}
+.mf-input:focus{border-color:var(--red);}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;}
+.btn-cancel{background:none;border:1px solid var(--gm);border-radius:6px;padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
+.btn-cancel:hover{background:var(--cream);}
+.btn-create{background:var(--red);color:#fff;border:none;border-radius:6px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}
+.btn-create:hover{opacity:.88;}
+.inputs-bar{background:#fff;border-bottom:1px solid var(--gl);padding:16px 40px;display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;}
+.ig label{display:block;font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#666;margin-bottom:5px;}
+.ig input{border:1.5px solid var(--gm);border-radius:6px;padding:8px 12px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--black);background:var(--cream);outline:none;min-width:180px;}
+.ig input:focus{border-color:var(--red);}
+.print-btn{padding:9px 18px;background:var(--red);color:#fff;border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:7px;margin-left:auto;}
+.print-btn:hover{opacity:.85;}
+.legend-bar{padding:12px 40px;display:flex;gap:18px;flex-wrap:wrap;border-bottom:1px solid var(--gl);background:var(--cream);}
+.li{display:flex;align-items:center;gap:7px;font-size:12px;color:#555;}
+.ldot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.main{padding:28px 40px 60px;max-width:860px;}
+.timeline{position:relative;padding-left:28px;}
+.tl-line{position:absolute;left:8px;top:0;bottom:0;width:1.5px;background:var(--gm);}
+.phase-lbl{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:#888;margin:26px 0 9px;padding-left:4px;}
+.phase-lbl:first-child{margin-top:0;}
+.ms-row{display:flex;align-items:flex-start;gap:13px;margin-bottom:9px;}
+.ms-dot{width:15px;height:15px;border-radius:50%;flex-shrink:0;margin-top:6px;position:relative;z-index:1;border:3px solid var(--cream);}
+.ms-dot.dim{opacity:.35;}
+.ms-card{background:#fff;border:1px solid var(--gl);border-radius:8px;padding:10px 15px;flex:1;}
+.ms-card.is-open{border-color:var(--red);border-width:1.5px;background:#fff9f9;}
+.ms-card.is-dim{opacity:.5;}
+.ms-meta{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:4px;}
+.ms-date{font-size:11px;font-weight:500;color:#888;}
+.ms-badge{font-size:11px;font-weight:500;background:var(--red);color:#fff;padding:2px 8px;border-radius:99px;margin-left:auto;}
+.ms-optional{font-size:10px;font-weight:500;background:#f0ede4;color:#888;padding:2px 8px;border-radius:99px;margin-left:auto;letter-spacing:.04em;}
+.owner-tag{font-size:11px;color:#555;background:var(--cream);border:1px solid var(--gm);padding:2px 8px;border-radius:99px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:4px;font-family:'DM Sans',sans-serif;}
+.owner-tag:hover{border-color:var(--red);color:var(--red);}
+.ei{font-size:10px;opacity:.5;}
+.owner-inp{font-size:11px;font-family:'DM Sans',sans-serif;border:1.5px solid var(--red);border-radius:99px;padding:2px 8px;outline:none;color:var(--black);background:#fff;min-width:130px;}
+.ms-title{font-size:14px;font-weight:500;color:var(--black);line-height:1.35;}
+.ms-detail{font-size:12px;color:#666;margin-top:2px;line-height:1.5;}
+.subtasks{margin-top:8px;padding-top:8px;border-top:1px solid var(--gl);}
+.subtask{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#555;padding:3px 0;}
+.subtask input[type=checkbox]{margin-top:2px;accent-color:var(--red);flex-shrink:0;cursor:pointer;}
+.subtask-text{line-height:1.4;}
+.subtask input[type=checkbox]:checked+.subtask-text{text-decoration:line-through;color:#aaa;}
+.note-area{width:100%;margin-top:8px;border:1px solid var(--gl);border-radius:6px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12px;color:#444;background:#fafaf5;resize:vertical;outline:none;min-height:36px;}
+.note-area:focus{border-color:var(--red);}
+.note-area::placeholder{color:#bbb;}
+.toggle-note{font-size:11px;color:#999;background:none;border:none;cursor:pointer;padding:4px 0 0;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:4px;}
+.toggle-note:hover{color:var(--red);}
+@media print{
+  #view-dashboard,.inputs-bar,.print-btn,.toggle-note,.back-btn{display:none!important;}
+  #view-detail{display:block!important;}
+  .note-area{border:none;background:transparent;resize:none;}
+  body{background:#fff;}
+  .hdr,.ftr{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .ms-card{break-inside:avoid;}
+}
+@media(max-width:600px){
+  .hdr,.inputs-bar,.legend-bar,.main,.ftr,.dash-toolbar,.dash-grid{padding-left:20px;padding-right:20px;}
+  .inputs-bar{flex-direction:column;}
+  .print-btn,.new-btn{margin-left:0;}
+}
+</style>
+</head>
+<body>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-title">Ny åpning</div>
+    <label class="mf-label" for="m-brand">Merkevare</label>
+    <input class="mf-input" id="m-brand" placeholder="Jordbærpikene / Sabrura / Big Bite">
+    <label class="mf-label" for="m-loc">Lokasjon</label>
+    <input class="mf-input" id="m-loc" placeholder="f.eks. Tonsenter, Moss">
+    <label class="mf-label" for="m-date">Åpningsdato</label>
+    <input class="mf-input" type="date" id="m-date">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Avbryt</button>
+      <button class="btn-create" onclick="createOpening()">Opprett kjøreplan</button>
+    </div>
+  </div>
+</div>
+
+<div id="view-dashboard">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-eye">Bitastad AS</div>
+      <div class="hdr-title">Nyåpninger</div>
+      <div class="hdr-sub" id="dash-sub">Oversikt over alle pågående og kommende åpninger</div>
+    </div>
+    <svg class="berry" viewBox="0 0 377 569" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <style>.w{fill:#fff}</style>
+      <path class="w" d="M375.93,264.77c0-19.9-13.74-50.08-34.69-52.73a1.16,1.16,0,0,1-1-1.06,40.15,40.15,0,0,0-39.73-36.58H267.38a1.15,1.15,0,0,1-.79-.31,111.5,111.5,0,0,0-32-21.31q-4.23-1.87-8.67-3.41a.36.36,0,0,1,.11-.71H329.35A3.62,3.62,0,0,0,333,145v-5.48a3.63,3.63,0,0,0-3.63-3.64H196a1.16,1.16,0,0,1-1.16-1.16V4.7A3.67,3.67,0,0,0,191.15,1h-5.43a3.66,3.66,0,0,0-3.66,3.66l-.32,130.06a1.18,1.18,0,0,1-1.17,1.16H47a3.64,3.64,0,0,0-3.64,3.63V145A3.63,3.63,0,0,0,47,148.66H150.31a.36.36,0,0,1,.11.71q-4.44,1.53-8.68,3.41a111.59,111.59,0,0,0-32,21.31,1.17,1.17,0,0,1-.79.31H79.76A43.81,43.81,0,0,0,36.56,211a1.17,1.17,0,0,1-1,1C14.33,214.34.4,244.72.4,264.77v1.16l.33.83C-.18,308,11.29,359.69,33.05,412.24c.76,1.84,1.54,3.68,2.32,5.5,2.47,5.76,5.11,11.58,7.83,17.29s5.53,11.33,8.45,16.92,5.91,11,9,16.37S66.78,478.88,70,484s6.4,10.06,9.65,14.85,6.57,9.46,9.84,13.86,6.62,8.69,9.91,12.71c2.69,3.27,5.46,6.65,8.5,9.75.9.92,1.83,1.82,2.79,2.69a121.26,121.26,0,0,0,14.46,11.29,115.16,115.16,0,0,0,109.45,9.06,112.2,112.2,0,0,0,19.53-11.05l.08-.06,14.3-11.77.14-.13c27.08-29.4,55-75.37,74.73-123,21.8-52.65,33.28-104.37,32.32-145.69l.25-.63Zm-12.36.88h0c1.17,39.87-10,90.29-31.38,142-18.34,44.3-44.32,87.71-69.43,116.07l-.06,0-2.59,2.61a99.75,99.75,0,0,1-30.41,20.82,103.39,103.39,0,0,1-83.07,0,99.7,99.7,0,0,1-30.28-20.7l-1.88-1.88-.06-.06C89,496.11,62.76,452.41,44.22,407.62,22.86,356,11.71,305.68,12.84,265.85l0-1.24-.37-.95c.53-19,14-39.73,25.89-39.73h6A3.66,3.66,0,0,0,48,220.31V219.1a33,33,0,0,1,32.86-32.61h33a1.17,1.17,0,0,0,.83-.34l1.43-1.44a99.6,99.6,0,0,1,30.47-20.88,101.64,101.64,0,0,1,33.79-8.42,1.18,1.18,0,0,1,1.26,1.18l-.16,64.08a3.65,3.65,0,0,0,3.7,3.65l6-.08a3.65,3.65,0,0,0,3.6-3.64v-64a1.17,1.17,0,0,1,1.25-1.17,101.51,101.51,0,0,1,33.63,8.41,99.53,99.53,0,0,1,30.47,20.88l1.43,1.44a1.17,1.17,0,0,0,.82.34h36.91a28.94,28.94,0,0,1,28.94,28.94v7.1a1.41,1.41,0,0,0,1.41,1.4h8.26c11.88,0,25.37,20.74,25.89,39.73l-.3.75Z"/>
+      <rect class="w" x="91.39" y="286.98" width="13.57" height="56.38" rx="3.66"/>
+      <rect class="w" x="135.88" y="400.22" width="13.57" height="56.38" rx="3.64"/>
+      <rect class="w" x="226.87" y="400.22" width="13.58" height="56.38" rx="3.64"/>
+      <rect class="w" x="181.38" y="286.98" width="13.58" height="56.38" rx="3.66"/>
+      <rect class="w" x="271.36" y="286.98" width="13.58" height="56.38" rx="3.66"/>
+    </svg>
+  </div>
+  <div class="dash-toolbar">
+    <span class="dash-summary" id="dash-count"></span>
+    <button class="new-btn" onclick="openModal()">+ Ny åpning</button>
+  </div>
+  <div class="dash-grid" id="dash-grid"></div>
+  <div class="ftr"><span class="ftr-text">Markedsplan – nyetableringer — Bitastad AS</span><span class="ftr-brand">Bitastad</span></div>
+</div>
+
+<div id="view-detail">
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-eye" id="d-eye">Jordbærpikene / Bitastad</div>
+      <div class="hdr-title">Kjøreplan – nyåpning</div>
+      <div class="hdr-sub" id="d-sub">Laster...</div>
+    </div>
+    <button class="back-btn" onclick="goBack()">← Tilbake</button>
+  </div>
+  <div class="inputs-bar">
+    <div class="ig"><label for="d-date">Åpningsdato</label><input type="date" id="d-date"></div>
+    <div class="ig"><label for="d-loc">Lokasjon</label><input type="text" id="d-loc" placeholder="f.eks. Tonsenter, Moss"></div>
+    <div class="ig"><label for="d-brand">Merkevare</label><input type="text" id="d-brand" placeholder="Jordbærpikene"></div>
+    <button class="print-btn" onclick="window.print()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Skriv ut / PDF
+    </button>
+  </div>
+  <div class="legend-bar">
+    <div class="li"><div class="ldot" style="background:#888780"></div>Før signering</div>
+    <div class="li"><div class="ldot" style="background:#1a6faf"></div>Forberedelser</div>
+    <div class="li"><div class="ldot" style="background:#da2a1c"></div>Åpningsdag</div>
+    <div class="li"><div class="ldot" style="background:#4a7a3a"></div>Etter åpning</div>
+  </div>
+  <div class="main">
+    <div class="timeline">
+      <div class="tl-line"></div>
+      <div id="tl"></div>
+    </div>
+  </div>
+  <div class="ftr"><span class="ftr-text">Markedsplan – nyetableringer — Bitastad AS</span><span class="ftr-brand" id="d-ftr-brand">Jordbærpikene</span></div>
+</div>
+
+<script>
+var ITEMS=[
+  // FASE 0
+  {o:-999,phase:"pre",label:"Fase 0 – Før signering / vurderingsfase",
+    title:"Underlag til etableringsråd",
+    detail:"Kartlegg konkurranse, nedslagsfelt, potensielle samarbeid og differensieringsfaktorer.",
+    owner:"Markedssjef",
+    subs:[
+      "Konkurrentkartlegging i nærområdet",
+      "Demografisk nedslagsfelt (radius, kjøpekraft)",
+      "Potensielle sponsorater og lokale samarbeid",
+      "Differensieringsfaktorer vs. eksisterende tilbud i senteret",
+      "Kjennskap og kunnskap basert på PLOT/tracker",
+      "Eksisterende tilbud på senter/nærområde",
+      "Risikovurdering – ligger det andre buffettkonsepter e.l. i nærheten",
+      "Behov for merkevarebygging ved etablering"
+    ]},
+
+  // T-12
+  {o:-84,phase:"prep",label:"T–12 uker",
+    title:"Oppstartsmøte",
+    detail:"Bekreft åpningsdato og lokasjon. Involverte: Regionleder, Driftskordinator, Salg og utviklingsleder (Sabrura).",
+    owner:"Markedssjef",
+    subs:[
+      "Bekreft åpningsdato",
+      "Opprett Notion-prosjektside",
+      "Avklar hvem som er involvert fra markedssiden",
+      "Thomas sender over skjermdump av Planner – hva han skal forberede seg på til oppstartsmøte",
+      "Spesielle avklaringer fra markedssiden? Ref. etableringscase. Nytt senter? Åpner flere på samme tid? Nytt område?"
+    ]},
+  {o:-84,phase:"prep",
+    title:"Innhent senterets markedsplan",
+    detail:"Be senterkontakt forberede senterets markedsplan til møte. Identifiser aktiviteter å koble seg på.",
+    owner:"Markedssjef",
+    subs:[
+      "Be om markedsplan fra senterkontakt (legg inn i agenda for møte med senterkontakt)",
+      "Marker relevante aktiviteter å samkjøre med"
+    ]},
+
+  // T-10
+  {o:-70,phase:"prep",label:"T–10 uker",
+    title:"E-post til senterkontakt – kartleggingsmøte",
+    detail:"Send standardmal med agenda. Kartlegg flater og avklar forventninger.",
+    owner:"Markedssjef",
+    subs:[
+      "Send mal-epost med agendaforslag",
+      "Bekreft møtetidspunkt",
+      "Pressemelding – har dere samarbeid med lokal presse?",
+      "Agenda kan baseres på tidligere e-poster fra Thomas + checklisten i møtepunktet under"
+    ]},
+  {o:-70,phase:"prep",
+    title:"Møte med senterkontakt",
+    detail:"Gå gjennom alle kommunikasjonsflater: skjermer, senteravis, aktivitetskalender, kundeklubb, parkering.",
+    owner:"Markedssjef",
+    subs:[
+      "Presentere konseptet",
+      "Vise eksempler fra andre åpninger (der vi har fått veldig fin dekning)",
+      "Best practice – hva har fungert og ikke på åpning. Suksesscase?",
+      "Skal det sendes over tone of voice?",
+      "Smaksprøver – er det noe policy der? Eller er dette CE/forretningspartners bord",
+      "Kartlegg digitale skjermer (plassering, format, tekniske krav)",
+      "Senteravis / magasin – frister og format",
+      "Kundeklubb og nyhetsbrev – mulighet for omtale",
+      "Aktivitetskalender – hva kan vi koble oss på?",
+      "Avklar kontaktpunkt for hverdagssamarbeid",
+      "Avklar forventninger til senterrabatter"
+    ]},
+
+  // Pressemelding og pressekit flyttes hit (rett etter møte med senterkontakt)
+  {o:-70,phase:"prep",
+    title:"Pressemelding klar",
+    detail:"Mal med ingress, sitat og faktaboks. Tilpasset lokalt nedslagsfelt.",
+    owner:"Markedssjef",
+    subs:[
+      "Tilpass sitat og lokalt nedslagsfelt",
+      "Godkjenn sitat med ansvarlig person",
+      "Kontaktliste lokal presse klar – settes sammen med senteret",
+      "Send til: lokalavis, regionalavis, bransjemedier, senterets kanaler"
+    ]},
+  {o:-70,phase:"prep",
+    title:"Pressekit klart",
+    detail:"Bilder av restaurant, mat og ny forretningspartner. Klar til utsendelse.",
+    owner:"Markedssjef",
+    subs:[
+      "Interiørbilder av lokalet",
+      "Produktbilder",
+      "Portrett av forretningspartner",
+      "Kortfakta om merkevaren"
+    ]},
+
+  // T-8
+  {o:-56,phase:"prep",label:"T–8 uker",
+    title:"Brief til HK Link – åpningsannonsering",
+    detail:"Bytt kun dato, lokasjon og åpningstilbud i malen. Meta + Google.",
+    owner:"Markedssjef",
+    subs:[
+      "Fyll ut og send standardmal",
+      "Bekreft budsjett og KPI-mål",
+      "Avklar kreativt materiell fra RR – leveringsdato",
+      "IKKE Clickup – her må rutine på plass med RR, HK Link osv. Det må være en ubetinget fordel å bruke hele huset",
+      "Skal det være definerte pakker? S, M, L?",
+      "Kreativt materiell fra grafiker på JP",
+      "Både HK Link og RR på kopi",
+      "Datoperiode?"
+    ]},
+  {o:-56,phase:"prep",
+    title:"Brief til Rosenborg Reklame",
+    detail:"Flyers, ballonger, dekor, vinylskilt, take-away-pose-innlegg, innkaster-materiell.",
+    owner:"Markedssjef",
+    subs:[
+      "Flyers – format, antall, innhold",
+      "Ballonger og dekor",
+      "Vinylskilt",
+      "Take-away-pose-innlegg",
+      "Innkaster-materiell – «Takk for velkomsten»-vinkling de første ukene",
+      "Bestill skilt etc. Fagtrykk",
+      "Bestill merch etc. Idé"
+    ]},
+  {o:-56,phase:"prep",
+    title:"Brief til SOME-ansvarlig",
+    detail:"Lokal og sentral SOME-plan inkl. LinkedIn. Publiseringsplan og ansvarsfordeling.",
+    owner:"Markedssjef",
+    subs:[
+      "Nasjonal plan (nedtelling, avsløring, åpningsdag)",
+      "Lokal plan (FB-side, åpningsevent, +1 uke)",
+      "Åpningsevent på FB 2 uker før",
+      "LinkedIn-plan nasjonalt og evt. forretningspartner",
+      "Bildebehov fra åpningsdagen",
+      "Hva leverer forretningspartner selv?"
+    ]},
+
+  // T-6
+  {o:-42,phase:"prep",label:"T–6 uker",
+    title:"Influencer/UGC-outreach",
+    detail:"Tilpasset lokalt nedslagsfelt. Utnytt eksisterende board (~300 profiler). Ikke aktuelt på alle åpninger.",
+    owner:"Markedssjef",
+    optional:true,
+    subs:[
+      "Filtrer board på geografi",
+      "Send outreach med dato og brief",
+      "Følg opp og bekreft deltakelse"
+    ]},
+
+  // T-4
+  {o:-28,phase:"prep",label:"T–4 uker",
+    title:"Nasjonal nedtelling starter",
+    detail:"«Gjett hvor vi åpner neste gang» – spenning, ikke for mye avsløring. Kan flyttes til 3 uker før åpning.",
+    owner:"SOME-ansvarlig",
+    subs:[
+      "Nasjonal IG – Story/Reel med hint",
+      "Planlegg avsløringstidspunkt (T–2 uker)",
+      "Give Away-konkurranse / «hvor åpner vi» en uke før"
+    ]},
+  {o:-28,phase:"prep",
+    title:"Vurder app-tilbud og digitale tiltak",
+    detail:"Egne åpningstilbud i senterets app eller lojalitetsapp for å bygge fart.",
+    owner:"Markedssjef",
+    subs:[
+      "Er senterets app aktuell?",
+      "Kan vi legge inn tilbud i egen lojalitetsapp?",
+      "Andre digitale fart-tiltak?"
+    ]},
+
+  // T-3
+  {o:-21,phase:"prep",label:"T–3 uker",
+    title:"Lokal Facebook-side oppe",
+    detail:"Lokal FB-side klar og publisert.",
+    owner:"SOME-ansvarlig",
+    subs:[
+      "Opprett FB-side for lokasjon",
+      "Legg inn profilbilde, omslagsbilde og info",
+      "Overfør admin til forretningspartner"
+    ]},
+  {o:-21,phase:"prep",
+    title:"Google Business Profile",
+    detail:"Opprett eller oppdater profil. Kritisk for lokal synlighet.",
+    owner:"Markedssjef",
+    subs:[
+      "Opprett/ta eierskap til profil",
+      "Legg inn bilder, åpningstider, kategori",
+      "Bekreft adresse og kontaktinfo"
+    ]},
+  {o:-21,phase:"prep",
+    title:"Fotosesjon",
+    detail:"Profesjonell foto av lokalet og produkter til annonser, pressekit og SOME. Ikke alltid aktuelt.",
+    owner:"Markedssjef",
+    optional:true,
+    subs:[
+      "Bestill fotograf",
+      "Eksteriør og interiørbilder",
+      "Produktbilder",
+      "Portrett av forretningspartner",
+      "Leveringsdato til RR og HK Link: senest T–14 dager"
+    ]},
+
+  // Flyers flyttes hit (3 uker før)
+  {o:-21,phase:"prep",
+    title:"Flyers og materiell sendt til avdeling",
+    detail:"CE-brief til crew: hva skjer, hvem gjør hva, smaksprøver, fotobehov.",
+    owner:"Markedssjef",
+    subs:[
+      "Send flyers til avdelingen",
+      "Distribuer CE-brief til alle på vakt",
+      "Brief crew på lojalitetsprogram og åpningstilbud"
+    ]},
+
+  // T-2
+  {o:-14,phase:"prep",label:"T–2 uker",
+    title:"Åpningsevent og SOME-avsløring",
+    detail:"Lokal SOME aktiveres. Avsløring av lokasjon på nasjonal IG. Alle punkter kan bygges inn i én publiseringsplan.",
+    owner:"SOME-ansvarlig",
+    subs:[
+      "Nasjonal IG: avsløringspost",
+      "Lokal FB: «vi kommer snart»-post",
+      "FB-event opprettes"
+    ]},
+  {o:-14,phase:"prep",
+    title:"LinkedIn-innlegg planlegges",
+    detail:"Hva publiseres nasjonalt på LinkedIn og når.",
+    owner:"Markedssjef",
+    subs:[
+      "Formuler innlegg (tone: stolt og vekstorientert)",
+      "Avklar om forretningspartner skal poste noe selv",
+      "Publiseringstidspunkt: T–1 uke eller åpningsdag?"
+    ]},
+
+  // Kommunikasjonspakke flyttes til T-1 uke
+  // Overlevering flyttes til T-1 uke
+  {o:-7,phase:"prep",label:"T–1 uke",
+    title:"Kommunikasjonspakke til forretningspartner",
+    detail:"SOME-guidelines, FB/IG-oppsett, Papirfly-tilgang, standardiserte åpningsinnlegg.",
+    owner:"Markedssjef",
+    subs:[
+      "SOME-guidelines-dokument",
+      "FB-side opprettet og overlevert",
+      "Tilgang til Papirfly",
+      "5–6 ferdig formulerte innlegg med caption-forslag (åpning, takk for velkomsten osv.)",
+      "Instruksjoner for publisering – kun bilde trengs fra partner",
+      "Kalender/ansvarsoversikt: hva Bitastad bidrar med og hvor lenge"
+    ]},
+  {o:-7,phase:"prep",
+    title:"Overlevering til forretningspartner",
+    detail:"Kalender og ansvarsoversikt deles. Partner informeres om sitt ansvar fra åpning og fremover.",
+    owner:"Markedssjef",
+    subs:[
+      "Overlevering av lokal SOME (tilganger)",
+      "Overlevering av ansvarskalender",
+      "Avklar støttenivå fremover"
+    ]},
+
+  // ÅPNINGSDAG
+  {o:0,phase:"open",label:"Åpningsdag",
+    title:"Åpning – {LOC}",
+    detail:"Dekor og ballonger oppe. Smaksprøver. Goodiebags deles ut. Innkaster-materiell ute.",
+    owner:"Avdeling + Markedssjef",
+    badge:"Åpningsdag",
+    subs:[
+      "Dekor og ballonger på plass",
+      "Smaksprøver klare og briefet",
+      "Goodiebags klare til utdeling",
+      "Innkaster-materiell ute",
+      "Fotograf/SOME tilstede og briefet",
+      "Åpningstilbud kommunisert til crew"
+    ]},
+
+  // ETTER ÅPNING
+  {o:1,phase:"after",label:"Etter åpning",
+    title:"Åpningsinnhold publiseres",
+    detail:"Bilder og video fra dag 1 på alle kanaler.",
+    owner:"SOME-ansvarlig",
+    subs:[
+      "Reel/video fra åpningsdagen",
+      "Feed-post med stemningsbilde",
+      "Stories med highlights"
+    ]},
+  {o:7,phase:"after",
+    title:"Takkemelding med rabattkode",
+    detail:"Automatisert utsendelse til alle som handlet under åpningsuka.",
+    owner:"Markedssjef",
+    subs:[
+      "Sett opp automatisert utsendelse i lojalitetssystem",
+      "Test at rabattkode fungerer",
+      "Kontroller leveringsliste"
+    ]},
+  {o:14,phase:"after",
+    title:"Reminder-kampanje",
+    detail:"Annonsering fortsetter i 2 uker etter åpning.",
+    owner:"HK Link",
+    subs:[
+      "Bekreft at kampanje kjører",
+      "Sjekk resultater og juster ved behov"
+    ]},
+  {o:14,phase:"after",
+    title:"Review-strategi aktiveres",
+    detail:"Be de første kundene legge igjen Google-anmeldelse.",
+    owner:"SOME-ansvarlig",
+    subs:[
+      "Brief crew på å be om Google-anmeldelse",
+      "Post på SOME med lenke til Google-profil"
+    ]},
+  {o:28,phase:"after",
+    title:"Lokal partneroutreach",
+    detail:"Forretningspartner sender e-postmaler til bedrifter, lag og foreninger i nærområdet. Bør ligge i kitet vi sender ut til forretningspartneren med FB-side etc.",
+    owner:"Forretningspartner",
+    subs:[
+      "Lever e-postmaler til partner",
+      "Bekreft at partner har liste over lokale bedrifter/lag",
+      "Følg opp at utsendelse er gjennomført"
+    ]},
+  {o:28,phase:"after",
+    title:"Evalueringsmøte – KPI-gjennomgang",
+    detail:"Rekkevidde, TA-andel, tall mot prognoser, svakhetstegn.",
+    owner:"Markedssjef",
+    subs:[
+      "Rapport fra HK Link mottatt?",
+      "Rekkevidde og visninger – vs. mål",
+      "TA-andel – ser det riktig ut?",
+      "Lav TA-andel som svakhetstegn?",
+      "Få studenter til tross for studentmasse i nærområdet?",
+      "Hva justerer vi til neste åpning?"
+    ]},
+  {o:60,phase:"after",
+    title:"Lojalitetspush (T+2 måneder)",
+    detail:"Klippekort, tilbud og lojalitetskommunikasjon.",
+    owner:"Markedssjef",
+    subs:[
+      "Planlegg kampanje i lojalitetssystem",
+      "Ev. annonsering for gjenkjøp"
+    ]},
+  {o:90,phase:"after",
+    title:"Forretningspartner fullt selvstendig (T+3 måneder)",
+    detail:"Markedsavdelingen trapper ned. Partner kjører lokalt ansvar videre.",
+    owner:"Daglig leder lokasjon",
+    subs:[
+      "Bekreft at partner er komfortabel",
+      "Avklar evt. løpende støtte",
+      "Lukk prosjektsiden i Notion"
+    ]}
+];
+
+var DC={pre:"#888780",prep:"#1a6faf",open:"#da2a1c",after:"#4a7a3a"};
+var openings=[];
+var currentId=null;
+
+function save(){try{localStorage.setItem("bitastad_openings",JSON.stringify(openings));}catch(e){}}
+function load(){try{var d=localStorage.getItem("bitastad_openings");if(d)openings=JSON.parse(d);}catch(e){openings=[];}}
+function addDays(d,n){var r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function fmt(d){return new Date(d).toLocaleDateString("nb-NO",{day:"numeric",month:"short",year:"numeric"});}
+
+function getStatus(dateStr){
+  if(!dateStr)return"upcoming";
+  var t=new Date().getTime();
+  var op=new Date(dateStr).getTime();
+  var d90=90*24*60*60*1000;
+  if(t<op)return"upcoming";
+  if(t<op+d90)return"active";
+  return"done";
+}
+
+function getProgress(id){
+  var key="checks_"+id;
+  try{
+    var d=JSON.parse(localStorage.getItem(key)||"{}");
+    var total=0,done=0;
+    ITEMS.forEach(function(m,mi){if(m.subs)m.subs.forEach(function(_,si){total++;if(d[mi+"_"+si])done++;});});
+    return total>0?Math.round(done/total*100):0;
+  }catch(e){return 0;}
+}
+
+function renderDash(){
+  load();
+  var grid=document.getElementById("dash-grid");
+  var count=document.getElementById("dash-count");
+  count.textContent=openings.length===0?"Ingen åpninger registrert":openings.length+" åpning"+(openings.length===1?"":"er");
+  var dsub=document.getElementById("dash-sub");
+  var active=openings.filter(function(o){return getStatus(o.date)==="active";}).length;
+  dsub.textContent=active>0?active+" aktiv"+(active===1?" åpning":" åpninger")+" pågår nå":"Oversikt over alle pågående og kommende åpninger";
+  if(openings.length===0){
+    grid.innerHTML='<div class="empty-state"><div class="empty-icon">🏗</div><div class="empty-title">Ingen åpninger ennå</div><div class="empty-sub">Trykk «Ny åpning» for å komme i gang</div></div>';
+    return;
+  }
+  grid.innerHTML="";
+  openings.forEach(function(o){
+    var pct=getProgress(o.id);
+    var st=getStatus(o.date);
+    var stLabel={upcoming:"Kommende",active:"Pågår nå",done:"Ferdig"}[st];
+    var stClass="status-"+st;
+    var card=document.createElement("div");
+    card.className="opening-card";
+    card.innerHTML='<div class="oc-brand">'+o.brand+'</div>'
+      +'<div class="oc-name">'+o.location+'</div>'
+      +'<div class="oc-date">'+(o.date?fmt(o.date):"Dato ikke satt")+'</div>'
+      +'<span class="oc-status '+stClass+'">'+stLabel+'</span>'
+      +'<div class="oc-progress"><div class="oc-bar" style="width:'+pct+'%"></div></div>'
+      +'<div class="oc-stats"><span class="oc-pct">'+pct+'% fullført</span><span class="oc-count">Klikk for å åpne</span></div>'
+      +'<button class="oc-delete" title="Slett åpning" onclick="deleteOpening(event,\''+o.id+'\')">✕</button>';
+    card.onclick=function(){openDetail(o.id);};
+    grid.appendChild(card);
+  });
+}
+
+function openModal(){document.getElementById("modal").classList.add("open");document.getElementById("m-loc").focus();}
+function closeModal(){document.getElementById("modal").classList.remove("open");document.getElementById("m-brand").value="";document.getElementById("m-loc").value="";document.getElementById("m-date").value="";}
+
+function createOpening(){
+  var brand=document.getElementById("m-brand").value.trim()||"Jordbærpikene";
+  var loc=document.getElementById("m-loc").value.trim();
+  var date=document.getElementById("m-date").value;
+  if(!loc){document.getElementById("m-loc").focus();return;}
+  var id="op_"+Date.now();
+  openings.push({id:id,brand:brand,location:loc,date:date});
+  save();
+  closeModal();
+  openDetail(id);
+}
+
+function deleteOpening(e,id){
+  e.stopPropagation();
+  if(!confirm("Slette denne åpningen?"))return;
+  openings=openings.filter(function(o){return o.id!==id;});
+  try{localStorage.removeItem("checks_"+id);localStorage.removeItem("notes_"+id);}catch(ex){}
+  save();
+  renderDash();
+}
+
+function goBack(){
+  saveDetailState();
+  document.getElementById("view-detail").style.display="none";
+  document.getElementById("view-dashboard").style.display="block";
+  renderDash();
+}
+
+function saveDetailState(){
+  if(!currentId)return;
+  var op=openings.find(function(o){return o.id===currentId;});
+  if(!op)return;
+  op.brand=document.getElementById("d-brand").value||op.brand;
+  op.location=document.getElementById("d-loc").value||op.location;
+  op.date=document.getElementById("d-date").value||op.date;
+  save();
+  var checks={};
+  document.querySelectorAll(".subtask input[type=checkbox]").forEach(function(cb){checks[cb.dataset.key]=cb.checked;});
+  try{localStorage.setItem("checks_"+currentId,JSON.stringify(checks));}catch(e){}
+  var notes={};
+  document.querySelectorAll(".note-area").forEach(function(na){if(na.dataset.key&&na.value)notes[na.dataset.key]=na.value;});
+  try{localStorage.setItem("notes_"+currentId,JSON.stringify(notes));}catch(e){}
+}
+
+function openDetail(id){
+  load();
+  var op=openings.find(function(o){return o.id===id;});
+  if(!op)return;
+  currentId=id;
+  document.getElementById("view-dashboard").style.display="none";
+  document.getElementById("view-detail").style.display="block";
+  document.getElementById("d-brand").value=op.brand||"";
+  document.getElementById("d-loc").value=op.location||"";
+  document.getElementById("d-date").value=op.date||"";
+  renderDetail();
+  ["d-date","d-loc","d-brand"].forEach(function(fid){document.getElementById(fid).oninput=function(){renderDetail();};});
+}
+
+function renderDetail(){
+  if(!currentId)return;
+  var loc=document.getElementById("d-loc").value||"lokasjon ikke angitt";
+  var brand=document.getElementById("d-brand").value||"Jordbærpikene";
+  var dv=document.getElementById("d-date").value;
+  var base=dv?new Date(dv):null;
+  document.getElementById("d-eye").textContent=brand+" / Bitastad";
+  document.getElementById("d-sub").textContent=(base&&loc!=="lokasjon ikke angitt")?brand+" — "+loc+" — åpner "+fmt(base):"Fyll inn dato og lokasjon";
+  document.getElementById("d-ftr-brand").textContent=brand;
+
+  var checks={};
+  var notes={};
+  try{checks=JSON.parse(localStorage.getItem("checks_"+currentId)||"{}");}catch(e){}
+  try{notes=JSON.parse(localStorage.getItem("notes_"+currentId)||"{}");}catch(e){}
+
+  var el=document.getElementById("tl");
+  el.innerHTML="";
+  var lastLabel="";
+
+  ITEMS.forEach(function(m,idx){
+    if(m.label&&m.label!==lastLabel){var p=document.createElement("div");p.className="phase-lbl";p.textContent=m.label;el.appendChild(p);lastLabel=m.label;}
+
+    var row=document.createElement("div");row.className="ms-row";
+    var dot=document.createElement("div");dot.className="ms-dot"+(m.optional?" dim":"");dot.style.background=DC[m.phase];
+    var card=document.createElement("div");card.className="ms-card"+(m.phase==="open"?" is-open":"")+(m.optional?" is-dim":"");
+
+    var meta=document.createElement("div");meta.className="ms-meta";
+    var ds=document.createElement("span");ds.className="ms-date";
+    if(base){ds.textContent=m.o===-999?"Før signering":m.o===0?fmt(base):(m.o<0?"T"+m.o:"T+"+m.o)+" dager — "+fmt(addDays(base,m.o));}
+    else{ds.textContent=m.o===-999?"Før signering":m.o===0?"Åpningsdag":m.o<0?"T"+m.o+" dager":"T+"+m.o+" dager";}
+    meta.appendChild(ds);
+
+    if(m.badge){var b=document.createElement("span");b.className="ms-badge";b.textContent=m.badge;meta.appendChild(b);}
+    if(m.optional){var opt=document.createElement("span");opt.className="ms-optional";opt.textContent="Valgfritt";meta.appendChild(opt);}
+
+    var ownerVal=m.owner;
+    var span=document.createElement("span");span.className="owner-tag";span.innerHTML=ownerVal+' <span class="ei">✎</span>';span.title="Klikk for å endre ansvarlig";
+    span.onclick=function(){
+      var inp=document.createElement("input");inp.type="text";inp.className="owner-inp";inp.value=ownerVal;
+      inp.onclick=function(e){e.stopPropagation();};
+      inp.onblur=function(){ownerVal=inp.value||ownerVal;span.innerHTML=ownerVal+' <span class="ei">✎</span>';meta.replaceChild(span,inp);};
+      inp.onkeydown=function(e){if(e.key==="Enter")inp.blur();if(e.key==="Escape"){inp.value=ownerVal;inp.blur();}};
+      meta.replaceChild(inp,span);inp.focus();inp.select();
+    };
+    meta.appendChild(span);
+
+    var ti=document.createElement("div");ti.className="ms-title";ti.textContent=m.title.replace("{LOC}",loc);
+    var de=document.createElement("div");de.className="ms-detail";de.textContent=m.detail;
+    card.appendChild(meta);card.appendChild(ti);card.appendChild(de);
+
+    if(m.subs&&m.subs.length){
+      var st=document.createElement("div");st.className="subtasks";
+      m.subs.forEach(function(s,si){
+        var key=idx+"_"+si;
+        var sr=document.createElement("label");sr.className="subtask";
+        var cb=document.createElement("input");cb.type="checkbox";cb.dataset.key=key;cb.checked=!!checks[key];
+        cb.onchange=function(){var c={};try{c=JSON.parse(localStorage.getItem("checks_"+currentId)||"{}");}catch(e){}c[key]=cb.checked;try{localStorage.setItem("checks_"+currentId,JSON.stringify(c));}catch(e){}renderDash();};
+        var tx=document.createElement("span");tx.className="subtask-text";tx.textContent=s;
+        sr.appendChild(cb);sr.appendChild(tx);st.appendChild(sr);
+      });
+      card.appendChild(st);
+    }
+
+    var noteKey="note_"+idx;
+    var tn=document.createElement("button");tn.className="toggle-note";
+    var na=document.createElement("textarea");na.className="note-area";na.placeholder="Notat...";na.dataset.key=noteKey;na.rows=2;
+    var savedNote=notes[noteKey]||"";
+    if(savedNote){na.value=savedNote;na.style.display="block";tn.innerHTML="− Skjul notat";}
+    else{na.style.display="none";tn.innerHTML="＋ Legg til notat";}
+    na.oninput=function(){var n={};try{n=JSON.parse(localStorage.getItem("notes_"+currentId)||"{}");}catch(e){}n[noteKey]=na.value;try{localStorage.setItem("notes_"+currentId,JSON.stringify(n));}catch(e){}};
+    tn.onclick=function(){if(na.style.display==="none"){na.style.display="block";tn.innerHTML="− Skjul notat";na.focus();}else{na.style.display="none";tn.innerHTML="＋ Legg til notat";}};
+    card.appendChild(tn);card.appendChild(na);
+
+    row.appendChild(dot);row.appendChild(card);el.appendChild(row);
+  });
+}
+
+load();renderDash();
+document.getElementById("modal").addEventListener("click",function(e){if(e.target===this)closeModal();});
+</script>
+</body>
+</html>
