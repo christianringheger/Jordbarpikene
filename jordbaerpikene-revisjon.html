@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#6b1f4a">
+<meta name="theme-color" content="#da2a1c">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="JP Revisjon">
@@ -10,17 +10,18 @@
 <title>Jordbærpikene – Internrevisjon</title>
 <style>
 :root{
-  --plum:#6b1f4a; --plum-d:#4a132f; --berry:#b8235a; --cream:#fbf6f0; --paper:#ffffff;
-  --ink:#241a20; --muted:#7a6b73; --line:#ece2db;
-  --green:#1f8a4c; --green-bg:#e6f4ec; --amber:#c77f1a; --amber-bg:#fbf1e0; --red:#c0203b; --red-bg:#fbe7e9;
+  --plum:#da2a1c; --plum-d:#b3231a; --berry:#da2a1c; --cream:#f5f5ea; --paper:#ffffff;
+  --ink:#000000; --muted:#6f6357; --line:#e6e3d6;
+  --green:#1f8a4c; --green-bg:#e6f4ec; --amber:#c77f1a; --amber-bg:#fbf1e0; --red:#da2a1c; --red-bg:#fbe7e9;
+  --brun:#cda177; --gronn:#708573;
   --wine:#7a1d2e; --wine-bg:#f6e9ec;
   --shadow:0 1px 2px rgba(36,26,32,.06),0 8px 24px rgba(36,26,32,.06);
   --r:14px; font-size:16px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0}
-body{background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.45;padding-bottom:env(safe-area-inset-bottom)}
-h1,h2,h3{font-family:Georgia,"Times New Roman",serif;letter-spacing:-.01em;font-weight:600;margin:0}
+body{background:var(--cream);color:var(--ink);font-family:"Maison Neue",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.45;padding-bottom:env(safe-area-inset-bottom)}
+h1,h2,h3{font-family:"Signal",Georgia,"Times New Roman",serif;text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin:0}
 .app{max-width:560px;margin:0 auto;min-height:100vh}
 header.top{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,var(--plum),var(--plum-d));color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 18px 14px;box-shadow:var(--shadow)}
 .top .brand{display:flex;align-items:center;gap:10px}
@@ -133,12 +134,39 @@ a.link{color:var(--berry);font-weight:600;text-decoration:none;cursor:pointer}
 .fuctl{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 .fuctl select,.fuctl input{font:inherit;font-size:.82rem;padding:8px 9px;border:1.5px solid var(--line);border-radius:9px;background:#fff;flex:1;min-width:120px}
 @media print{.fuctl,.photoin{display:none!important}}
+.brandwrap{text-align:center}
+.jplogo{width:190px;max-width:60%;height:auto;display:block;margin:2px auto 6px}
+header.top .sub{font-size:.7rem;text-transform:uppercase;letter-spacing:.14em;opacity:.92;text-align:center}
 </style>
 
 <div class="app">
   <header class="top">
-    <div class="brand"><span class="dot"></span>
-      <div><h1>Jordbærpikene</h1><div class="sub">Internrevisjon · IK-Mat · IK-Alkohol · HMS</div></div>
+    <div class="brandwrap">
+<svg class="jplogo" role="img" aria-label="Jordbærpikene" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 401 94">
+  
+  <defs>
+    <style>
+      .st0 {
+        fill: #fff;
+      }
+    </style>
+  </defs>
+  <path class="st0" d="M71.5,62.6v-27.5c0-.9.3-1.2,1.2-1.2h3.6c.9,0,1.2.3,1.2,1.2v29.2c0,8.2-3.4,10.6-8.1,10.6s-1.2-.3-1.2-1.2v-3.3c0-.9.3-1.1,1.2-1.2,2.1-.2,2.1-2.9,2.1-6.6ZM74.5,24.4c1.9,0,3.4,1.5,3.4,3.4,0,0,0,0,0,0,0,1.8-1.5,3.3-3.3,3.4,0,0,0,0,0,0-1.8,0-3.3-1.4-3.4-3.2,0,0,0-.1,0-.2,0-1.8,1.4-3.4,3.3-3.4,0,0,0,0,.1,0h0Z"/>
+  <path class="st0" d="M101,53.1c0,8.3-4.8,11.1-9,11.1s-9-2.8-9-11.1v-8.4c0-8.3,4.8-11.1,9-11.1s9,2.8,9,11.1v8.4ZM92,39.1c-1.6,0-3,1-3,4.6v10.4c0,3.6,1.4,4.6,3,4.6s3-1,3-4.6v-10.4c0-3.6-1.4-4.6-3-4.6h0Z"/>
+  <path class="st0" d="M115.4,39.3c-3,0-3,3.1-3,6.2v17.3c0,.9-.3,1.2-1.2,1.2h-3.6c-.9,0-1.2-.3-1.2-1.2v-27.7c0-.9.3-1.2,1.2-1.2h3.6c.9,0,1.2.3,1.2,1.2v.7c1.2-1.2,2.7-1.8,4.3-1.9h.6c.9,0,1.2.3,1.2,1.2v3.3c0,.9-.3,1.4-1.2,1.2-.6-.2-1.3-.3-1.9-.3Z"/>
+  <path class="st0" d="M135,64c-.9,0-1.2-.3-1.2-1.2v-.8c-1.1,1.4-2.7,2.2-4.5,2.2-4.5.2-8.1-2.8-8.1-10.2v-10.1c0-7.4,3.6-10.4,8.1-10.2,1.8,0,3.4.9,4.5,2.3v-12.9c0-.9.3-1.2,1.2-1.2h3.6c.9,0,1.2.3,1.2,1.2v39.8c0,.9-.3,1.2-1.2,1.2h-3.6ZM133.8,43.8c0-3.6-1.6-4.6-3.2-4.6s-3.3,1-3.3,4.6v10.3c0,3.6,1.6,4.6,3.3,4.6s3.2-1,3.2-4.6v-10.3Z"/>
+  <path class="st0" d="M147.1,64c-.9,0-1.2-.3-1.2-1.2V23c0-.9.3-1.2,1.2-1.2h3.6c.9,0,1.2.3,1.2,1.2v12.9c1.1-1.4,2.7-2.3,4.5-2.3,4.5-.2,8.1,2.8,8.1,10.2v10.1c0,7.4-3.6,10.4-8.1,10.2-1.8,0-3.4-.8-4.5-2.2v.8c0,.9-.3,1.2-1.2,1.2h-3.6ZM151.9,54.1c0,3.6,1.6,4.6,3.2,4.6s3.3-1,3.3-4.6v-10.4c0-3.6-1.6-4.6-3.3-4.6s-3.2,1-3.2,4.6v10.4Z"/>
+  <path class="st0" d="M187.1,54.1c0,3.6,1.4,4.6,3,4.6s2.8-.7,2.9-3.2c0-1,.1-1.6,1.2-1.6h3.4c.9,0,1.1.3,1.2,1.2.2,3.4-2.4,9.1-8.7,9.1-2.8,0-5.4-1.2-7-3.5-1.4,2.2-3.9,3.5-6.4,3.5-4.3,0-7.6-2.7-7.6-8v-2.7c0-6.6,5.7-7.3,9.3-8.7,1.8-.7,2.7-1.6,2.7-3,0-1.5-1.2-2.7-2.7-2.7,0,0,0,0,0,0-1.5,0-2.9,1.3-2.8,3.6,0,.9-.2,1.2-1.2,1.2h-3.3c-.9,0-1.1-.3-1.2-1.2-.2-4.8,3.5-8.9,8.2-9.1,2.3-.1,4.5.7,6.2,2.2,1.6-1.5,3.7-2.3,5.9-2.2,4.3,0,9,2.8,9,11.1v4c0,1-.3,1.2-1.3,1.2h-9.6c-.8,0-1.1.2-1.2.9v3.3ZM181.1,53.9v-4.9c-3.2,1.5-6,2.1-6,5.1v.5c0,.9,0,4,3,4,2.6,0,2.9-2.2,3-4.7h0ZM190.1,39.2c-1.6,0-2.9.9-3,4.2q0,1.2,1.2,1.2h3.6q1.2,0,1.2-1.2c-.1-3.3-1.5-4.2-3.1-4.2h0Z"/>
+  <path class="st0" d="M213.6,39.3c-3,0-3,3.1-3,6.2v17.3c0,.9-.3,1.2-1.2,1.2h-3.6c-.9,0-1.2-.3-1.2-1.2v-27.7c0-.9.3-1.2,1.2-1.2h3.6c.9,0,1.2.3,1.2,1.2v.7c1.2-1.2,2.7-1.9,4.4-1.9h.6c.9,0,1.2.3,1.2,1.2v3.3c0,.9-.3,1.4-1.2,1.2-.6-.2-1.3-.3-2-.3Z"/>
+  <path class="st0" d="M221.3,35.1c0-.9.3-1.2,1.2-1.2h.7c.9,0,1.2.3,1.2,1.2v1.1c1.1-1.6,2.9-2.5,4.8-2.5,4.3-.2,7.7,2.6,7.7,10.6v9.4c0,8-3.4,10.8-7.7,10.6-1.9,0-3.7-1-4.8-2.6v12c0,.9-.3,1.2-1.2,1.2h-.7c-.9,0-1.2-.3-1.2-1.2v-38.6ZM233.8,43c0-4.9-2.2-6.5-4.7-6.5s-4.7,1.6-4.7,6.5v11.9c0,4.9,2.2,6.5,4.7,6.5s4.7-1.6,4.7-6.5v-11.9Z"/>
+  <path class="st0" d="M245.2,27.3c1.1,0,1.9.9,1.9,1.9,0,1-.8,1.9-1.9,1.9,0,0,0,0,0,0-1.1,0-1.9-.9-1.9-1.9,0-1.1.9-1.9,1.9-1.9ZM245.5,64h-.7c-.9,0-1.2-.3-1.2-1.2v-27.7c0-.9.3-1.2,1.2-1.2h.7c.9,0,1.2.3,1.2,1.2v27.7c0,.9-.3,1.2-1.2,1.2Z"/>
+  <path class="st0" d="M254,62.8V23c0-.9.3-1.2,1.2-1.2h.7c.9,0,1.2.3,1.2,1.2v26.4l8.7-14.3c.6-1,.9-1.2,1.5-1.2h1.1c.7,0,1.1.5.6,1.2l-7.3,11.9,8.1,15.8c.4.7,0,1.2-.8,1.2h-1.1c-.6,0-.8-.2-1.3-1.2l-6.8-13.1-2.8,4.6v8.5c0,.9-.3,1.2-1.2,1.2h-.7c-.9,0-1.2-.3-1.2-1.2Z"/>
+  <path class="st0" d="M282,33.6c4.3,0,8.1,2.6,8.1,10.6v3.2c0,.9-.3,1.2-1.2,1.2h-10.6q-1.2,0-1.2,1.2v5c0,4.9,2.4,6.5,4.9,6.5s4.6-2.2,4.9-5.2c0-1,.1-1.5,1-1.5h1c.8,0,1.1.2,1.1,1.1-.1,3.7-2,8.5-7.9,8.5s-8.1-2.6-8.1-10.6v-9.4c0-8,3.7-10.6,8-10.6ZM278.3,45.8h7.5q1.2,0,1.2-1.2v-1.6c0-4.9-2.4-6.5-4.9-6.5s-4.9,1.6-4.9,6.5v1.6q0,1.2,1.2,1.2h0Z"/>
+  <path class="st0" d="M304.6,36.5c-2.5,0-4.7,1.6-4.7,6.5v19.8c0,.9-.3,1.2-1.2,1.2h-.7c-.9,0-1.2-.3-1.2-1.2v-27.7c0-.9.3-1.2,1.2-1.2h.7c.9,0,1.2.3,1.2,1.2v1.1c1.1-1.6,2.9-2.6,4.8-2.6,4.3-.2,7.7,2.6,7.7,10.6v18.5c0,.9-.3,1.2-1.2,1.2h-.7c-.9,0-1.2-.3-1.2-1.2v-19.8c0-4.9-2.2-6.5-4.7-6.5Z"/>
+  <path class="st0" d="M326.8,33.6c4.3,0,8.1,2.6,8.1,10.6v3.2c0,.9-.3,1.2-1.2,1.2h-10.6q-1.2,0-1.2,1.2v5c0,4.9,2.4,6.5,4.9,6.5s4.6-2.2,4.9-5.2c0-1,.1-1.5,1-1.5h1c.8,0,1.1.2,1.1,1.1-.1,3.7-2,8.5-7.9,8.5s-8.1-2.6-8.1-10.6v-9.4c0-8,3.7-10.6,8-10.6ZM323.1,45.8h7.5q1.2,0,1.2-1.2v-1.6c0-4.9-2.4-6.5-4.9-6.5s-4.9,1.6-4.9,6.5v1.6q0,1.2,1.2,1.2Z"/>
+  <path class="st0" d="M341.2,23.1c2.6,0,4.8,2.1,4.8,4.8s-2.1,4.8-4.8,4.8-4.8-2.1-4.8-4.8h0c0-2.6,2.1-4.8,4.8-4.8,0,0,0,0,0,0ZM341.2,32c2.3,0,4.1-1.9,4.1-4.1,0-2.3-1.9-4.1-4.1-4.1-2.3,0-4.1,1.9-4.1,4.1,0,2.3,1.8,4.1,4.1,4.1,0,0,0,0,0,0h0ZM340,31v-6.3c0-.1,0-.2.2-.2h1.1c.8,0,1.4.5,1.4,1.6v.5c0,.5-.2,1-.6,1.4l.6,3c0,.1,0,.1-.2.1h-.3c-.1,0-.2,0-.2-.1l-.5-2.6q0-.1-.2-.1h-.4q-.2,0-.2.2v2.5c0,.1,0,.2-.2.2h-.3c-.2,0-.2,0-.2-.2ZM340.7,27.4q0,.2.2.2h.4c.5,0,.7-.2.7-1v-.3c0-.8-.2-1-.7-1h-.4q-.2,0-.2.2v1.9Z"/>
+</svg>
+      <div class="sub">Internrevisjon · IK-Mat · IK-Alkohol · HMS</div>
     </div>
     <div class="crumb" id="crumb"></div>
   </header>
