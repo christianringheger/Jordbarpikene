@@ -1,0 +1,938 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#6b1f4a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="JP Revisjon">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});}</script>
+<title>Jordbærpikene – Internrevisjon</title>
+<style>
+:root{
+  --plum:#6b1f4a; --plum-d:#4a132f; --berry:#b8235a; --cream:#fbf6f0; --paper:#ffffff;
+  --ink:#241a20; --muted:#7a6b73; --line:#ece2db;
+  --green:#1f8a4c; --green-bg:#e6f4ec; --amber:#c77f1a; --amber-bg:#fbf1e0; --red:#c0203b; --red-bg:#fbe7e9;
+  --wine:#7a1d2e; --wine-bg:#f6e9ec;
+  --shadow:0 1px 2px rgba(36,26,32,.06),0 8px 24px rgba(36,26,32,.06);
+  --r:14px; font-size:16px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.45;padding-bottom:env(safe-area-inset-bottom)}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;letter-spacing:-.01em;font-weight:600;margin:0}
+.app{max-width:560px;margin:0 auto;min-height:100vh}
+header.top{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,var(--plum),var(--plum-d));color:#fff;padding:calc(env(safe-area-inset-top) + 14px) 18px 14px;box-shadow:var(--shadow)}
+.top .brand{display:flex;align-items:center;gap:10px}
+.top .dot{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff7eb0,var(--berry));box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)}
+.top h1{font-size:1.18rem;color:#fff}
+.top .sub{font-size:.72rem;opacity:.8;margin-top:2px;letter-spacing:.04em;text-transform:uppercase}
+.crumb{font-size:.82rem;opacity:.92;margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.crumb button{background:rgba(255,255,255,.16);border:0;color:#fff;font:inherit;font-size:.8rem;padding:5px 11px;border-radius:999px}
+main{padding:18px 16px 96px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:16px;margin:0 0 14px}
+.muted{color:var(--muted)}.small{font-size:.82rem}.tiny{font-size:.74rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;font:inherit;font-weight:600;padding:14px 16px;cursor:pointer;width:100%;font-size:1rem}
+.btn.primary{background:var(--plum);color:#fff}.btn.berry{background:var(--berry);color:#fff}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--ink)}
+.btn.sm{width:auto;padding:9px 13px;font-size:.86rem;border-radius:10px}
+.btn:active{transform:translateY(1px)}
+.row{display:flex;gap:10px}.row.wrap{flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;padding:4px 9px;border-radius:999px;letter-spacing:.02em;text-transform:uppercase}
+.pill.krit{background:var(--red-bg);color:var(--red)}.pill.vikt{background:var(--amber-bg);color:var(--amber)}
+.pill.anbe{background:#eef2f6;color:#5a6b7a}.pill.flag{background:#2a1018;color:#ff8aa6}
+.cat{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--berry)}
+.assume{background:var(--green-bg);border:1px solid #bfe3cc;border-radius:12px;padding:13px 14px;font-size:.84rem}
+.assume b{color:var(--green)}
+.warn{background:var(--amber-bg);border:1px solid #f0dcb6;border-radius:12px;padding:11px 13px;font-size:.82rem;margin-top:10px}
+.warn b{color:var(--amber)}
+.menu-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 4px;border-bottom:1px solid var(--line)}
+.menu-item:last-child{border-bottom:0}.menu-item .lab{font-weight:600}
+.prog{height:8px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:8px}
+.prog>i{display:block;height:100%;background:linear-gradient(90deg,var(--berry),var(--plum));width:0;transition:width .3s}
+.cp .q{font-weight:600;font-size:1.02rem;margin:8px 0 4px}
+.cp .why{font-size:.84rem;color:var(--muted);margin:0 0 12px}
+.acc{border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden}
+.acc>summary{list-style:none;cursor:pointer;padding:11px 13px;font-size:.82rem;font-weight:600;color:var(--plum);background:#faf5f1;display:flex;justify-content:space-between;align-items:center}
+.acc>summary::-webkit-details-marker{display:none}
+.acc .body{padding:12px 13px;font-size:.84rem}
+.acc ul{margin:4px 0 0;padding-left:18px}.acc li{margin:3px 0}
+.score-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}
+.sbtn{border:1.5px solid var(--line);background:#fff;border-radius:11px;padding:12px 6px;font:inherit;font-weight:700;font-size:.82rem;cursor:pointer;text-align:center;color:var(--ink);line-height:1.15}
+.sbtn small{display:block;font-weight:500;font-size:.66rem;color:var(--muted);margin-top:3px}
+.sbtn[data-on="ok"]{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+.sbtn[data-on="avvik"]{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.sbtn[data-on="na"]{border-color:#9aa7b2;background:#eef2f6;color:#5a6b7a}
+.flagnote{margin-top:11px;background:var(--red-bg);border:1px solid #f3c4cc;color:var(--red);border-radius:10px;padding:10px 12px;font-size:.82rem;font-weight:600;display:none}
+.flagnote.show{display:block}
+.dev{margin-top:12px;border-top:2px dashed var(--line);padding-top:12px;display:none}
+.dev.show{display:block}
+.dev label{display:block;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin:11px 0 5px}
+.dev input,.dev select,.dev textarea{width:100%;font:inherit;font-size:.92rem;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.dev textarea{min-height:62px;resize:vertical}
+.chip{display:inline-block;font-size:.8rem;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;margin:4px 6px 0 0;cursor:pointer}
+.chip.on{background:var(--plum);color:#fff;border-color:var(--plum)}
+.frist{font-weight:700}.frist.um{color:var(--red)}.frist.t24{color:var(--amber)}.frist.d14{color:var(--plum)}
+.seg{display:flex;gap:0;border:1.5px solid var(--line);border-radius:11px;overflow:hidden;margin-top:6px}
+.seg button{flex:1;border:0;background:#fff;font:inherit;font-weight:700;padding:11px;cursor:pointer;color:var(--muted)}
+.seg button.on{background:var(--plum);color:#fff}
+.fld{width:100%;padding:11px;border:1.5px solid var(--line);border-radius:10px;font:inherit}
+.fab{position:fixed;left:0;right:0;bottom:0;z-index:40;max-width:560px;margin:0 auto;padding:10px 16px calc(env(safe-area-inset-bottom) + 10px);background:linear-gradient(to top,var(--cream) 70%,transparent);display:flex;gap:10px}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.kpi .k{background:#faf5f1;border:1px solid var(--line);border-radius:12px;padding:13px}
+.kpi .k b{font-size:1.5rem;display:block;font-family:Georgia,serif}
+.statusbar{border-radius:14px;padding:16px;color:#fff;text-align:center;margin-bottom:14px}
+.statusbar.GRØNN{background:linear-gradient(135deg,#1f8a4c,#136b39)}
+.statusbar.GUL{background:linear-gradient(135deg,#d79320,#b4730f)}
+.statusbar.RØD{background:linear-gradient(135deg,#c0203b,#8e132a)}
+.statusbar .big{font-size:2.4rem;font-family:Georgia,serif;line-height:1}
+.devcard{border:1px solid var(--line);border-left-width:5px;border-radius:10px;padding:11px 13px;margin:8px 0;font-size:.86rem}
+.devcard.k{border-left-color:var(--red)}.devcard.v{border-left-color:var(--amber)}.devcard.a{border-left-color:#5a6b7a}
+.devcard .h{font-weight:700;display:flex;justify-content:space-between;gap:8px}
+.recur{background:#2a1018;color:#ff9bb3;font-size:.7rem;font-weight:700;padding:2px 7px;border-radius:999px}
+.hist{display:flex;justify-content:space-between;align-items:center;padding:12px 4px;border-bottom:1px solid var(--line)}
+.hist .s{font-weight:700;font-family:Georgia,serif}
+.s-GRØNN{color:var(--green)}.s-GUL{color:var(--amber)}.s-RØD{color:var(--red)}
+hr.sep{border:0;border-top:1px solid var(--line);margin:16px 0}
+.sectionhead{display:flex;align-items:center;gap:10px;margin:22px 2px 8px}
+.sectionhead .n{font-family:Georgia,serif;color:var(--berry);font-size:1.1rem}
+.sectionhead.alk .n{color:var(--wine)}
+.sectionhead h3{font-size:1.02rem}
+a.link{color:var(--berry);font-weight:600;text-decoration:none;cursor:pointer}
+.copybox{white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.74rem;background:#faf5f1;border:1px solid var(--line);border-radius:10px;padding:12px;max-height:280px;overflow:auto}
+.alkcard{border-left:4px solid var(--wine)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media print{
+  body{background:#fff}
+  header.top,.fab,.no-print,.acc,.score-row{display:none!important}
+  main{padding:0!important}
+  .app{max-width:none}
+  .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid;page-break-inside:avoid}
+  .devcard{break-inside:avoid;page-break-inside:avoid}
+  .print-head{display:block!important;margin-bottom:14px;border-bottom:2px solid var(--plum);padding-bottom:10px}
+  #ledvur-print{display:block!important}
+  .statusbar{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  a[href]:after{content:""}
+}
+.print-head{display:none}
+.toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%) translateY(10px);background:#241a20;color:#fff;padding:9px 16px;border-radius:999px;font-size:.82rem;font-weight:600;opacity:0;transition:opacity .2s,transform .2s;z-index:60;pointer-events:none}
+.toast.show{opacity:.96;transform:translateX(-50%) translateY(0)}
+.thumbs{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0}
+.thumb{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.thumbwrap{position:relative;display:inline-block}
+.thumbwrap button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--red);color:#fff;font-weight:700;line-height:1;cursor:pointer}
+.nareason{display:none;margin-top:8px}
+.nareason.show{display:block}
+.nareason input{width:100%;font:inherit;font-size:.9rem;padding:9px 11px;border:1.5px solid var(--line);border-radius:10px}
+.custt{font-size:.9rem;padding:9px 11px;border:1.5px solid var(--line);border-radius:10px}
+.lockbanner{background:#eef2f6;border:1px solid #cfd9e2;border-radius:12px;padding:12px 14px;font-size:.86rem;color:#41525e;margin-bottom:14px}
+.lockbanner b{color:#2a3a45}
+.incomplete{background:var(--amber-bg);border:1px solid #f0dcb6;border-radius:12px;padding:12px 14px;font-size:.86rem;margin-bottom:14px}
+.incomplete b{color:var(--amber)}
+.finbadge{display:inline-block;background:var(--green-bg);color:var(--green);font-weight:700;font-size:.72rem;padding:4px 10px;border-radius:999px}
+.fuctl{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.fuctl select,.fuctl input{font:inherit;font-size:.82rem;padding:8px 9px;border:1.5px solid var(--line);border-radius:9px;background:#fff;flex:1;min-width:120px}
+@media print{.fuctl,.photoin{display:none!important}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="dot"></span>
+      <div><h1>Jordbærpikene</h1><div class="sub">Internrevisjon · IK-Mat · IK-Alkohol · HMS</div></div>
+    </div>
+    <div class="crumb" id="crumb"></div>
+  </header>
+  <main id="view"></main>
+  <div class="fab" id="fab"></div>
+</div>
+
+<script>
+/* =================== KATEGORIER & VEKT =================== */
+const WEIGHTS={mattrygghet:.45,drift:.20,konsept:.17,ledelse:.13,alkohol:.15};
+const CATNAME={mattrygghet:"Mattrygghet / IK-Mat",drift:"Drift & renhold",konsept:"Konsept / gjest",ledelse:"Ledelse / etterlevelse",alkohol:"Skjenking / IK-Alkohol"};
+const CATORDER=["konsept","drift","mattrygghet","ledelse","alkohol"]; // fysisk runde: gjest → disk/kjøkken → bakrom/IK-Mat → ledelse
+
+/* =================== KONTROLLPUNKTER (IK-Mat / IK-Alkohol / HMS) =================== */
+const CP=[
+/* ---------- MATTRYGGHET ---------- */
+{id:"M1",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,na:1,
+ q:"Er kjøl (rom/disk/benk/monter) ≤ 4 °C, målt og ført i dag (skjema 4.9)?",
+ why:"Lett bedervelige varer (krem, melk, baser) vokser bakterier over 4 °C. Måles mellom to varer med håndholdt termometer hver morgen.",
+ ver:["Observasjon: les display + kontrollmål i vare med eget termometer","Dokumentasjon: skjema 4.9 ført og signert i dag","Spørsmål: hva gjør du ved temp over 4 °C?"],
+ avvik:["Disk 7–9 °C","Display lest, men ikke kontrollmålt i vare","Overfylt disk/dårlig luftsirkulasjon"],
+ tiltak:["Flytt varer til kjøl ≤4 °C, vurder holdbarhet/kasting per produkt","Øk antall kontroller til stabilt, registrer avvik (4.1)","Reduser varemengde, sjekk pakning/lufting/filter"]},
+{id:"M2",kat:"mattrygghet",kl:"kritisk",flag:0,hurtig:1,na:1,
+ q:"Er frys ≤ −18 °C (lagring), ført i dag (skjema 4.9)?",
+ why:"Sikrer holdbarhet og hindrer delvis tining/refrysing av bær, bunner, vafler, burger, kylling.",
+ ver:["Observasjon: display + iskrystaller/tinevann","Dokumentasjon: skjema 4.9","Spørsmål: rutine ved frysstans?"],
+ avvik:["Frys −12 °C","Istegn etter tidligere tining","Ingen frysslogg"],
+ tiltak:["Avrim, juster innstilling, bestill service","Vurder/kasser varer ved tegn på tining","Innfør daglig fryssavlesning"]},
+{id:"M3",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,na:1,
+ q:"Varmebehandling: kjernetemp ≥ 80 °C ved første batch, ført (skjema 4.10)? (N/A uten varmproduksjon i dag)",
+ why:"JP-norm er 80 °C – egen sikkerhetsmargin over lovkravet (72 °C/15 s). Gjelder burger, kylling, laks, lasagne, supper.",
+ ver:["Observasjon: måles i kaldeste del (midten) av første batch","Dokumentasjon: 4.10 Temperatur og oppstartskontroll","Spørsmål: hva er grensa, og hva gjør du om den ikke nås?"],
+ avvik:["Ingen kjernetempmåling","Måler under 80 °C uten tiltak","Termometer ikke rengjort før/etter"],
+ tiltak:["Fortsett varmebehandling, mål neste batch","Finn årsak: lav platetemp / for kort tid","Rengjør og kontroller termometer mot referanse"]},
+{id:"M4",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,na:1,
+ q:"Nedkjøling: kan ansatt VISE prosessen i praksis – betjene nedkjølingsskapet og måle kjernetemp – og er 60→10 °C ≤ 2 t ført (4.10)?",
+ why:"En rutine på veggen er ikke etterlevelse – ansatte må kunne utføre nedkjøling og betjene utstyret. Faresonen 10–60 °C skal passeres raskt for å hindre bakterievekst og toksin.",
+ ver:["Demonstrasjon: be ansatt kjøle ned et produkt nå – og betjene skapet","Observasjon: passer porsjon/kasserolle i skapet? termometer finnes og virker?","Dokumentasjon: 4.10 med start/slutt-klokkeslett + kjernetemp","Spørsmål: hva er grensa, og hva gjør du hvis 10 °C ikke nås på 2 t?"],
+ avvik:["Varm mat står på benk til vaktslutt før kjøl","Ansatt kjenner ikke nedkjølingsrutinen","Kan ikke betjene nedkjølingsskap / mangler termometer","Ingen tidslogg"],
+ tiltak:["Del i mindre porsjoner / iskar / nedkjølingsskap, skaff egnet bakke","Skaff og kalibrer termometer for kjernetemp","Praktisk opplæring i skapets innstillinger (vis, ikke fortell)","Registrer tid 60–10 °C, kast om >2 t ga risiko"]},
+{id:"M5",kat:"mattrygghet",kl:"kritisk",flag:0,hurtig:1,na:1,
+ q:"Varmholding ≥ 60 °C, ført? (N/A uten varm servering)",
+ why:"Under 60 °C vokser bakterier i varmholdt mat.",
+ ver:["Observasjon: termometer i varmholdt produkt","Dokumentasjon: kontrollskjema","Spørsmål: hvor lenge holdes mat varm?"],
+ avvik:["Suppe 48 °C","Ingen måling","Varmholdt >4 t"],
+ tiltak:["Varm til ≥80 °C på nytt eller kast","Juster varmeutstyr","Innfør tidsgrense + logg"]},
+{id:"M6",kat:"mattrygghet",kl:"viktig",flag:0,hurtig:0,
+ q:"Mottakskontroll: temp ved levering ført – kjøl 0–4 °C, frys maks −15 °C (4.10), omløpsnr notert?",
+ why:"Kuldekjeden kan brytes før varen når dere. Sporing sikres via omløpsnr i bok for mottakskontroll.",
+ ver:["Observasjon: termometer ved varemottak","Dokumentasjon: 4.10 + bok for mottakskontroll med omløpsnr/pakkseddel","Spørsmål: hva gjør du ved for varm levering?"],
+ avvik:["Ingen tempmåling ved mottak","Tar imot varm/skadet vare","Omløpsnr ikke notert (sporing brutt)"],
+ tiltak:["Mål og før temp ved hver levering","Avvis/reklamér, signert fraktbrev med avvikende temp","Innfør omløpsnr-rutine for sporing"]},
+{id:"M7",kat:"mattrygghet",kl:"viktig",flag:0,hurtig:0,
+ q:"Frosne bær til direkte servering: er de varmebehandlet (>85 °C) eller dokumentert konsumklare fra leverandør?",
+ why:"Importerte frosne bær har gitt norovirus/Hepatitt A-utbrudd. Bær som legges rått på spiseklare produkter skal være varmebehandlet eller ha leverandørgaranti for direkte konsum.",
+ ver:["Observasjon: legges ukokte bær direkte på kremkake/pynt?","Dokumentasjon: leverandørspesifikasjon «klar til konsum» eller intern kokerutine","Spørsmål: vet ansatt om bær skal kokes?"],
+ avvik:["Ukokte importerte bær på spiseklart produkt","Ingen kjennskap til risiko","Mangler leverandørgaranti"],
+ tiltak:["Avklar med Servicekontoret/Matfaglig om bær er konsumklare","Innfør kokerutine (>85 °C) om de ikke er det","Lær opp alle som håndterer bær"]},
+{id:"M8",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,
+ q:"Er kremkaker/bløtkaker og halvfabrikata merket med produksjonsdato (+ initialer) og innenfor holdbarhet?",
+ why:"Kremprodukter er høyrisiko. Lagerstyring (2.5) krever merking type+dato på alt internt produsert.",
+ ver:["Observasjon: merkelapp på hver kake/påsmurt","Dokumentasjon: holdbarhetsregler per produkt","Spørsmål: når skal kake kastes?"],
+ avvik:["Umerkede kaker i disk","Utgått vare i salg","Ulik praksis mellom ansatte"],
+ tiltak:["Kast umerket/utgått nå","Obligatorisk dato+initialer ved produksjon","Heng opp holdbarhetstabell"]},
+{id:"M9",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,
+ q:"Brukes gjeldende allergeninfo fra intranett, og finner ansatt riktig allergen for et konkret produkt?",
+ why:"Liv og helse. Allergenmenyen vedlikeholdes sentralt av Servicekontoret fra leverandørdatablad – lokal plikt er å bruke siste versjon.",
+ ver:["Observasjon: allergeninfo i bruk samsvarer med dagens meny","Dokumentasjon: siste oppdatering fra intranett","Spørsmål: be ansatt vise allergener i et valgt produkt"],
+ avvik:["Bruker utdatert liste","Ansatt finner ikke fram","Nye produkter mangler info"],
+ tiltak:["Hent siste allergeninfo fra intranett","Meld manglende/feil til Servicekontoret","Allergenopplæring av front"]},
+{id:"M10",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,
+ q:"Allergen-kryssforurensning: egen ren fjøl + rent utstyr + hansker til allergikermat, allergenprodukter sist, røde fjøler til rå kylling?",
+ why:"Per 2.7/2.6: allergikermat smøres på egen ren fjøl, åpne ny pakke ved tvil, vask hender + hansker. Rå kylling = røde fjøler.",
+ ver:["Observasjon: dedikert/rengjort redskap, fargekode følges","Dokumentasjon: rutine for redskapsbytte","Spørsmål: hvordan unngår du å overføre nøtter/gluten?"],
+ avvik:["Én kniv på alle kaker","Rå kylling på feil fjøl","Ingen rengjøring mellom allergengrupper"],
+ tiltak:["Egen ren fjøl + hansker til allergikermat","Produser allergenprodukter sist","Håndhev fargekode (røde fjøler rå kylling)"]},
+{id:"M11",kat:"mattrygghet",kl:"kritisk",flag:0,hurtig:1,
+ q:"Er rå og spiseklare varer adskilt, tildekket og datomerket i kjøl?",
+ why:"Hindrer kryssforurensning og styrer holdbarhet. 2.2/2.5: alt skal være tildekt.",
+ ver:["Observasjon: rått adskilt/under spiseklart, alt dekket","Dokumentasjon: merking","Spørsmål: hvor lagres åpnede varer?"],
+ avvik:["Udekket åpnet vare","Rått over spiseklart","Mangler åpnet-/produksjonsdato"],
+ tiltak:["Dekk til og merk alt","Omorganiser kjøl: spiseklart øverst","Innfør åpnet-dato-merking"]},
+{id:"M12",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,
+ q:"Håndvaskstasjon komplett (såpe, papir, varmt vann) og korrekt håndvask (min 20 sek) observert?",
+ why:"Hender er hovedkilde til smitte. Plansje 4.12: 20 sek såpe, albue/papir ved kran/dør fra toalett.",
+ ver:["Observasjon: dedikert håndvask, såpe+papir, ansatt vasker ved oppgaveskifte","Dokumentasjon: håndvaskplansje synlig","Spørsmål: når skal du vaske hender?"],
+ avvik:["Tom såpe/papir","Håndvask brukt til oppvask/utstyr","Ingen vask mellom oppgaver"],
+ tiltak:["Fyll såpe/papir, frigjør håndvask","Heng opp 4.12 håndvaskplansje","Innskjerp + demonstrér rutinen"]},
+{id:"M13",kat:"mattrygghet",kl:"kritisk",flag:0,hurtig:1,
+ q:"Personlig hygiene & driftshygiene: rent arbeidstøy, ren/uren sone holdes adskilt, ingen jobber syk, sår tildekket?",
+ why:"2.6: private klær aldri i ren sone, skitne kopper direkte til skrubb, sår/sykdom-rutine, smykker/negler.",
+ ver:["Observasjon: tøy, sone-flyt, sår, smykker","Dokumentasjon: hygienereglement signert","Spørsmål: hva gjør du ved omgangssyke?"],
+ avvik:["Privat tøy/eiendeler i ren sone","Skitne kopper gjennom ren sone","Jobber med mage-/tarmsymptomer"],
+ tiltak:["Send syk hjem (48t-regel)","Plaster+hanske på sår","Innskjerp ren/uren-sone-flyt"]},
+{id:"M14",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,
+ q:"Er produksjons-/bakesone ren OGSÅ bak, under og over utstyr – ikke bare på synlige flater?",
+ why:"Renhold er en risikofaktor og et av Mattilsynets vanligste avvik. Forurensning samler seg bak, under og over utstyr – der man ikke ser ved første blikk.",
+ ver:["Observasjon: SE BAK/UNDER/OVER – ventilasjon over stekesone, under og bak utstyr, hjul, kjøleskuffer, tak, sluk, glipper mellom benk og topp","Dokumentasjon: renholdsplan 2.9 dekker disse sonene + signering","Spørsmål: hvem rengjør ventilasjon/under utstyr, og hvor ofte?"],
+ avvik:["Støvlag i ventilasjon/over stekesone","Matrester på hjul og i sprekker","Inntørket i kjøleskuffer","Sprut i tak/på vegg, skitt under benk"],
+ tiltak:["Stopp produksjon på sonen, dyprengjør bak/under/over","Legg ventilasjon, hjul, kjøleskuffer og tak inn i renholdsplanen med frekvens","Avklar nytt vaskefirma sitt omfang skriftlig"]},
+{id:"M15",kat:"mattrygghet",kl:"viktig",flag:0,hurtig:0,
+ q:"Følges renholdsplanen (2.9) og signeres den løpende – ikke etterskuddsført?",
+ why:"Plan uten etterlevelse er verdiløs. Lik penn/håndskrift på alt = etterskuddssignering = avvik.",
+ ver:["Observasjon: samsvar signatur vs faktisk renhold","Dokumentasjon: renholdsplan siste 14 dager","Spørsmål: be ansatt vise hva som ble gjort i går"],
+ avvik:["Alt signert på én gang","Plan henger, ingen følger den","Soner mangler"],
+ tiltak:["Daglig signering ved utført oppgave","Stikkprøvekontroll fra leder","Knytt renhold til vaktplan"]},
+{id:"M16",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,
+ q:"Føres temperatur-/oppstartslogg løpende og troverdig (ikke etterskuddsført)?",
+ why:"Anti-juks. Logg som fylles ut på forhånd gir falsk trygghet og er et reelt tilsynsfunn.",
+ ver:["Observasjon: hull i datoer, identisk håndskrift, urealistisk like tall, framtidige datoer","Dokumentasjon: 4.9/4.10 siste 14 dager","Spørsmål: be ansatt måle og føre nå – stemmer det?"],
+ avvik:["Hele uka ført på forhånd","Identiske tall hver dag","Manglende dager uten avviksnotat"],
+ tiltak:["Sanntidsføring (digitalt med tidsstempel)","Lederkontroll med stikkprøvemåling","Opplæring: hva loggen er til for"]},
+{id:"M17",kat:"mattrygghet",kl:"viktig",flag:0,hurtig:1,
+ q:"Skadedyr: ingen tegn (lort, gnag, insekter), feller hensiktsmessig plassert, Rentokil-avtale aktiv?",
+ why:"2.6: avtale med Rentokil, dokumentér tegn (bilde/skadet vare), varsle skadedyrfirma + senterleder.",
+ ver:["Observasjon: hjørner, lager, bak utstyr, dørbunn, feller","Dokumentasjon: skadedyrrapport/Rentokil","Spørsmål: hvem varsler ved tegn?"],
+ avvik:["Lort i lager","Åpen bakdør uten sikring","Feller mangler/ikke kontrollert"],
+ tiltak:["Kontakt Rentokil + senterleder, registrer avvik","Tett åpninger, fjern matkilder","Kontrollér fellplassering"]},
+{id:"M18",kat:"mattrygghet",kl:"viktig",flag:0,hurtig:0,
+ q:"Sporbarhet: kan en råvare/parti spores ett ledd bakover via omløpsnr/pakkseddel?",
+ why:"Lovkrav. Avgjørende ved tilbakekalling (allergen-/smitteutbrudd).",
+ ver:["Observasjon: original merking beholdt","Dokumentasjon: omløpsnr i mottaksbok + pakkseddel","Spørsmål: finner dere et tilbakekalt bærparti?"],
+ avvik:["Vare omhelt uten merking","Ingen oppbevaring av pakkseddel/omløpsnr","Kan ikke koble vare til leverandør"],
+ tiltak:["Behold original merking til vare er brukt","System for pakksedler/omløpsnr","Batch-notat ved omhelling"]},
+{id:"M19",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,
+ q:"Er kjemikalier/vaskemidler lagret adskilt fra næringsmidler og rent utstyr?",
+ why:"Vaskemidler ved siden av mat eller rent utstyr gir kjemisk forurensningsfare. Egen kjemikalie-risikovurdering finnes i IK.",
+ ver:["Observasjon: er vaskemidler skilt fra mat og rent utstyr på alle hyller/soner?","Dokumentasjon: risikovurdering kjemikalier + SDS-merking","Spørsmål: hvor skal vaskemidler stå?"],
+ avvik:["Sprayflaske ved siden av rent utstyr/mat","Kjemikalier på samme hylle som emballert vare","Ingen fast plass for kjemikalier"],
+ tiltak:["Flytt kjemikalier til egen, atskilt sone nå","Merk fast lagerplass for vaskemidler","Følg SDS-merking og kjemikalie-risikovurdering"]},
+{id:"M20",kat:"mattrygghet",kl:"kritisk",flag:0,hurtig:1,
+ q:"Er utstyr helt og ubeskadiget – fjøler hele/jevne, ingen sprukne eller ødelagte plastbokser?",
+ why:"Hakkete/misfargede fjøler og sprukne bokser kan ikke rengjøres effektivt og kan avgi plastbiter i maten (fysisk fare).",
+ ver:["Observasjon: fjøler (hakk/misfarge), plastbokser (sprekk/hull), annet kontaktutstyr","Spørsmål: rutine for å kassere ødelagt utstyr?"],
+ avvik:["Hakkete/misfargede fjøler i bruk","Sprukne/hullete bokser","Ødelagt utstyr ikke kassert"],
+ tiltak:["Kassér og erstatt skadede fjøler/bokser nå","Innfør jevnlig utstyrssjekk","Bestill nytt kontaktutstyr ved behov"]},
+{id:"M21",kat:"mattrygghet",kl:"kritisk",flag:1,hurtig:1,
+ q:"Finnes nødvendig måleutstyr og virker det (termometer for kjernetemp, kalibrert)?",
+ why:"Uten fungerende termometer er temperatur- og nedkjølingslogg verdiløs. Måleutstyr må finnes, virke og være kalibrert.",
+ ver:["Observasjon: håndholdt termometer finnes, virker, er rent","Dokumentasjon: kalibrering mot referanse","Spørsmål: be ansatt måle en temperatur nå"],
+ avvik:["Termometer mangler eller virker ikke","Ukalibrert","Ansatt vet ikke hvor det er"],
+ tiltak:["Skaff fungerende termometer nå","Kalibrer mot referansetermometer","Fast plass + rengjøringsrutine for føler"]},
+{id:"M22",kat:"mattrygghet",kl:"kritisk",flag:0,hurtig:1,
+ q:"Fungerer håndvasken på personaltoalettet (såpe, papir, vann)?",
+ why:"Uten fungerende håndvask på personaltoalett brytes håndhygienen som beskytter maten.",
+ ver:["Observasjon: test kran, såpe, papir på personaltoalett","Spørsmål: hvor vasker ansatte hender etter toalettbesøk?"],
+ avvik:["Håndvask på toalett ute av funksjon","Mangler såpe/papir på toalett"],
+ tiltak:["Få håndvasken reparert nå (meld senter/vaktmester)","Sikre såpe+papir på toalett","Avvik registreres til lukket"]},
+{id:"M23",kat:"mattrygghet",kl:"kritisk",flag:0,hurtig:0,
+ q:"Finnes egnet garderobe med skille mellom privat tøy/eiendeler og rent arbeidstøy?",
+ why:"Privat tøy, parfyme og eiendeler blandet med kjøkkenutstyr kan overføre kjemisk/mikrobiologisk forurensning eller allergener til mat. Privat og arbeidstøy skal oppbevares adskilt.",
+ ver:["Observasjon: adskilt oppheng/oppbevaring privat vs arbeidstøy","Spørsmål: hvor henger privat tøy vs arbeidstøy?"],
+ avvik:["Kontor brukt som garderobe uten skille","Privat tøy/parfyme blandet med kjøkkenutstyr","Tilgjengelig garderobe ikke i bruk"],
+ tiltak:["Ta i bruk senterets garderobe / sett opp adskilt oppheng","Skill privat tøy og arbeidstøy fysisk","Fjern private eiendeler/parfyme fra matområder"]},
+/* ---------- DRIFT & RENHOLD ---------- */
+{id:"D1",kat:"drift",kl:"viktig",flag:0,hurtig:0,
+ q:"Praktiseres FIFO/FEFO i kjøl, frys og tørrlager (dårligst dato fremst)?",
+ why:"2.5/2.6: reduserer svinn og hindrer utgått vare.",
+ ver:["Observasjon: eldste/dårligst dato fremst","Spørsmål: hvordan plasseres nye varer?"],
+ avvik:["Nye varer foran gamle","Utgått bakerst"],
+ tiltak:["Rydd lager etter dato","FEFO-merking","Ukentlig datokontroll"]},
+{id:"D2",kat:"drift",kl:"viktig",flag:0,hurtig:0,
+ q:"Renholdsutstyr rent og riktig behandlet: fjøler lufttørkes i stativ, kokkekniver ikke i maskin, kluter byttes?",
+ why:"2.6/2.9: skittent utstyr sprer smitte. Fjøler i stativ, kniver manuelt (også håndtaket).",
+ ver:["Observasjon: fjølstativ, knivvask, kluter","Spørsmål: hvor ofte byttes kluter?"],
+ avvik:["Fjøler stablet våte","Kokkekniv i maskin","Skitne kluter gjenbrukt"],
+ tiltak:["Lufttørk fjøler i stativ","Manuell knivvask inkl. håndtak","Fargekodede kluter, daglig bytte"]},
+{id:"D3",kat:"drift",kl:"viktig",flag:0,hurtig:0,
+ q:"Steam-maskin: vask 60 °C / skyll 72 °C kontrollert og daglig rengjort (vann skiftes før bestikk)?",
+ why:"4.10/2.9: steam-maskin er sentral i oppvask/desinfeksjon; feil temp gir dårlig renhold.",
+ ver:["Observasjon: temp vask/skyll","Dokumentasjon: 4.10 steam-maskin","Spørsmål: når skiftes vannet?"],
+ avvik:["Skyll under 72 °C","Maskin ikke daglig rengjort","Vann ikke skiftet før bestikk"],
+ tiltak:["Kontrollér/juster vask 60/skyll 72","Daglig innvendig rengjøring + dørlister","Skift vann før bestikkvask"]},
+{id:"D4",kat:"drift",kl:"viktig",flag:0,hurtig:0,
+ q:"Avfall: tømmes etter endt arbeidsdag, lukket, ikke i ren sone?",
+ why:"Åpent/overfylt avfall tiltrekker skadedyr og gir forurensningsfare.",
+ ver:["Observasjon: avfallskar lokk/plassering","Spørsmål: tømmerutine"],
+ avvik:["Overfylt åpent kar i produksjon","Avfall ikke tømt etter vakt"],
+ tiltak:["Lokk + tøm etter arbeidsdag","Flytt avfall ut av ren sone"]},
+{id:"D5",kat:"drift",kl:"viktig",flag:0,hurtig:0,
+ q:"Kritisk utstyr vedlikeholdt: kjøl tetter, termometer kalibrert, isbitmaskin rengjort (kast første parti)?",
+ why:"Utstyrssvikt er rotårsak til temperaturavvik. Service anbefales 1x/år.",
+ ver:["Observasjon: dørpakninger, kondens, isbitmaskin","Dokumentasjon: service/kalibrering (13.5 serviceavtaler)","Spørsmål: når sjekket sist?"],
+ avvik:["Slitt dørpakning","Ukalibrert termometer","Isbitmaskin ikke rengjort"],
+ tiltak:["Bytt pakning / bestill service","Kalibrer termometer mot referanse","Ukentlig rengjøring isbitmaskin"]},
+{id:"D6",kat:"drift",kl:"viktig",flag:0,hurtig:0,
+ q:"Kaffe/melk: melk i kjøl mellom bruk, kanner og damprør rengjort?",
+ why:"Melkrester i kanner/damprør/automat er bakteriegrobunn – kjernedrift for kafé.",
+ ver:["Observasjon: kanner, damprør, automat","Spørsmål: rengjørings-/kjølerutine for melk"],
+ avvik:["Melkekanne i romtemp","Inntørket melk i damprør","Sjelden automatrengjøring"],
+ tiltak:["Melk i kjøl mellom bruk","Daglig rengjøring kanner/damprør","Automatrengjøring etter plan"]},
+{id:"D7",kat:"drift",kl:"anbefalt",flag:0,hurtig:0,
+ q:"Vedlikehold lokale: møbler stabile, lys/musikk/temp ok, ingen synlig slitasje for gjest?",
+ why:"JP-vedlikeholdsrutine: små detaljer (løs stol, vegg-merker, død lyspære) trekker ned helhetsinntrykk. Avvik håndteres samme dag.",
+ ver:["Observasjon: møbler, vegger, lys, uteområde","Spørsmål: meldes/følges småfeil opp samme dag?"],
+ avvik:["Løse/ustabile møbler","Merker på vegg","Død belysning"],
+ tiltak:["Meld og følg opp samme dag","Ukentlig slitasjegjennomgang","Avstem større tiltak med regionleder"]},
+/* ---------- KONSEPT / GJEST ---------- */
+{id:"K1",kat:"konsept",kl:"viktig",flag:0,hurtig:0,
+ q:"Vaskes bord straks gjesten har gått, og byttes klut flere ganger daglig?",
+ why:"2.6: «Bordene skal vaskes så fort som mulig etter at gjesten har forlatt kafeen. Bytt klut flere ganger ila dagen.»",
+ ver:["Observasjon: ledige bord rene, kluttilstand","Spørsmål: rutine for bordvask"],
+ avvik:["Skitne bord står lenge","Samme klut hele dagen"],
+ tiltak:["Bordvask straks gjest går","Bytt klut flere ganger daglig"]},
+{id:"K2",kat:"konsept",kl:"viktig",flag:0,hurtig:0,
+ q:"Er toalett rent, daglig vasket og forsynt (såpe/papir), og kontrolleres det?",
+ why:"2.9: toalett vaskes daglig. Typisk gjesteklage-kilde og synlig hygieneindikator.",
+ ver:["Observasjon: toalett, såpe, papir","Dokumentasjon: signert daglig renhold","Spørsmål: hvem sjekker i åpningstid?"],
+ avvik:["Skittent toalett","Tomt for såpe/papir","Ingen sjekk i åpningstid"],
+ tiltak:["Innfør toalettrunde med signering","Etterfyll såpe/papir","Bemanning til renhold i åpningstid"]},
+{id:"K3",kat:"konsept",kl:"viktig",flag:0,hurtig:1,
+ q:"Glassmonter/disk ren (flere ganger daglig) og kaker presentert hele/pene iht konsept?",
+ why:"2.9: glassmonter vaskes flere ganger daglig. Disken er kjernekonseptet til Jordbærpikene.",
+ ver:["Observasjon: monter, diskens utseende","Spørsmål: hvor ofte rengjøres monter?"],
+ avvik:["Tilgriset monter","Uttørkede/slitne kaker","Ujevn porsjonering"],
+ tiltak:["Rengjør monter flere ganger daglig","Fjern produkter som ikke holder standard","Sjekk disk ved vaktbytte"]},
+{id:"K4",kat:"konsept",kl:"viktig",flag:0,hurtig:0,
+ q:"Kasse/betalingsterminal ren (min 2× daglig, touch med fuktig klut uten kjemikalier) og ryddig?",
+ why:"2.6/2.9: terminal/skjerm vaskes min 2x daglig; touch-skjerm med fuktig hvit klut uten kjemikalier.",
+ ver:["Observasjon: kasse, terminal, skjerm, ryddighet","Spørsmål: hvor ofte vaskes terminal?"],
+ avvik:["Tilgriset terminal/skjerm","Rotete kasseområde"],
+ tiltak:["Vask terminal/skjerm min 2x daglig","Hold kasseområdet ryddig"]},
+{id:"K5",kat:"konsept",kl:"kritisk",flag:0,hurtig:0,
+ q:"Kommuniseres allergeninfo korrekt til gjest – henvis til liste, og opplys at spor ikke kan garanteres?",
+ why:"2.7: ved allergiker skal kunden informeres om at spor ikke kan garanteres, og det skal gis korrekt info (lovkrav, liv/helse).",
+ ver:["Observasjon: hvordan besvares en allergispørring?","Spørsmål: be ansatt forklare hva en glutenallergiker kan få"],
+ avvik:["Gjetter på innhold","Henviser ikke til liste","Garanterer «helt trygt»"],
+ tiltak:["Allergenopplæring av front","Standardsvar: vis lista + opplys om sporrisiko","Synlig henvisning til allergeninfo"]},
+{id:"K6",kat:"konsept",kl:"kritisk",flag:0,hurtig:0,
+ q:"Kan ansatt svare på innhold og allergener i et tilfeldig valgt produkt?",
+ why:"Tester reell kompetanse, ikke bare at info finnes.",
+ ver:["Spørsmål: pek på en kake – be om hovedingredienser + allergener"],
+ avvik:["Vet ikke innhold","Må gjette","Finner ikke fram i info"],
+ tiltak:["Produktkunnskap inn i opplæring","Oppfriskning ved nye produkter"]},
+{id:"K7",kat:"konsept",kl:"anbefalt",flag:0,hurtig:0,
+ q:"Servicestandard (6.1): vertskap/framtoning – gjest først, øyekontakt, fraser, uniform?",
+ why:"«Sannhetens øyeblikk» avgjør gjenkjøp. Servicestandarden definerer framtoning og fraser.",
+ ver:["Observasjon: velkomst, øyekontakt, uniform, fraser","Spørsmål: kjenner ansatt servicestandarden?"],
+ avvik:["Ingen velkomst","Mobil synlig for gjest","Manglende uniform"],
+ tiltak:["Repetér servicestandard 6.1","Uniformsrutine ved vaktstart"]},
+{id:"K8",kat:"konsept",kl:"anbefalt",flag:0,hurtig:0,
+ q:"Klagehåndtering iht servicestandard – tar ansatte imot klager riktig og løser lokalt?",
+ why:"6.1: «en klage er en gave». Riktig håndtering redder gjenkjøp; kundeklager skal også til avvik@jbp.no.",
+ ver:["Spørsmål: hvordan håndterer du en misfornøyd gjest?","Dokumentasjon: kundeklager meldt videre?"],
+ avvik:["Avviser klager","Løser ikke lokalt","Klager ikke registrert"],
+ tiltak:["Tren klagehåndtering 6.1","Registrer kundeklage + send avvik@jbp.no"]},
+{id:"K9",kat:"konsept",kl:"anbefalt",flag:0,hurtig:0,
+ q:"Helhetsinntrykk konsepttro – «ville jeg vært stolt av å ta med en gjest hit i dag?» (jf. KTI)",
+ why:"Vedlikeholdsrutinen + 13.12 Etterlevelse av konsept. Kan kobles til avdelingens KTI-score i Power BI.",
+ ver:["Observasjon: helhet, gjenkjennelig konsept","Dokumentasjon: siste KTI-score","Spørsmål: hva trekker ned i dag?"],
+ avvik:["Lav/fallende KTI","Konseptbrudd i uttrykk"],
+ tiltak:["Prioriter tiltak mot lavest KTI-dimensjon","Gjennomgå 13.12 Etterlevelse av konsept"]},
+/* ---------- LEDELSE / ETTERLEVELSE ---------- */
+{id:"L1",kat:"ledelse",kl:"kritisk",flag:0,hurtig:1,
+ q:"Følger Café-eier/ansvarlig opp rutiner aktivt – kan vise siste 7 dagers logg OG en konkret handling ved avvik?",
+ why:"Kjernen i utfordringen: rutiner finnes, men følges ikke opp. Café-eier har hovedansvar for IK (1.4) og at avvik lukkes (1.6).",
+ ver:["Dokumentasjon: siste 7 dagers logg + notert håndtert avvik","Spørsmål: vis siste gang du grep inn på et avvik"],
+ avvik:["Ingen synlig oppfølging","Logg leses aldri","Avvik registreres ikke"],
+ tiltak:["Fast ukentlig leder-gjennomgang av logger","Signert lederkontroll","Coaching på oppfølging"]},
+{id:"L2",kat:"ledelse",kl:"viktig",flag:0,hurtig:0,
+ q:"Etterspør Regionleder/Regional salgsleder dokumentasjon – finnes spor av tidligere oppfølging?",
+ why:"Oppfølging må gå begge veier, ellers blir revisjon en engangshendelse.",
+ ver:["Dokumentasjon: tidligere rapporter + oppfølgingsspor","Spørsmål: når fulgte regionleder opp forrige avvik?"],
+ avvik:["Ingen historikk på oppfølging","Rapporter arkiveres uten handling"],
+ tiltak:["Fast revisjonskadens med oppfølgingsmøte","Sporbar avvikslogg på tvers av besøk"]},
+{id:"L3",kat:"ledelse",kl:"kritisk",flag:0,hurtig:0,
+ q:"Er tidligere avvik lukket og kvittert med dato (akseptabel lukkegrad)?",
+ why:"Åpne/gjentakende avvik betyr at systemet ikke virker – et ledelsesavvik. 1.6: lukkede avvik kvitteres OK med dato.",
+ ver:["Dokumentasjon: forrige avviksliste m/status (4.1)","Spørsmål: hvilke er fortsatt åpne, og hvorfor?"],
+ avvik:["Avvik fra forrige besøk åpne","Samme avvik gjentas","Frister oversittes"],
+ tiltak:["Eskalér åpne avvik til regionnivå","Rotårsaksanalyse på gjentakende","Sett ansvarlig + ny frist, følg opp"]},
+{id:"L4",kat:"ledelse",kl:"kritisk",flag:1,hurtig:1,
+ q:"Kan en TILFELDIG ansatt forklare HVORFOR en rutine finnes (med egne ord, ikke lese opp)?",
+ why:"Forståelse gir varig etterlevelse. Kan de ikke forklare hvorfor, følges rutinen ikke under press.",
+ ver:["Spørsmål: «Hvorfor måler vi kjøltemp?»/«Hvorfor 80 °C?» – krev egen forklaring","Observasjon: trygghet vs usikkerhet"],
+ avvik:["Leser opp uten å forstå","«Fordi sjefen sa det»","Vet ikke hvorfor"],
+ tiltak:["Endre opplæring fra «hva» til «hvorfor»","Korte praksisnære gjennomganger på vakt","Leder forklarer hensikt, ikke bare regel"]},
+{id:"L5",kat:"ledelse",kl:"kritisk",flag:0,hurtig:0,
+ q:"Er opplæring dokumentert for alle ansatte (signert, datert – inkl. hygiene og allergen)?",
+ why:"Lovkrav (IK §5) og forutsetning for etterlevelse. Café-eier har opplæringsansvar (1.4).",
+ ver:["Dokumentasjon: opplæringsmatrise/-signaturer","Spørsmål: hvem mangler opplæring?"],
+ avvik:["Nyansatte uten dokumentert opplæring","Ingen oppfriskning","Allergen ikke dekket"],
+ tiltak:["Opplæringsmatrise per ansatt","Opplæring før selvstendig vakt","Årlig oppfriskning"]},
+{id:"L6",kat:"ledelse",kl:"viktig",flag:0,hurtig:0,
+ q:"Er egen internkontroll/egenrevisjon gjennomført iht plan?",
+ why:"IK-Mat krever jevnlig egenkontroll; uten den oppdages avvik først ved tilsyn.",
+ ver:["Dokumentasjon: egenrevisjonsrapporter m/dato","Spørsmål: når kjørte dere sist egenrevisjon?"],
+ avvik:["Ingen egenrevisjon","Plan finnes, ikke gjennomført"],
+ tiltak:["Fast egenrevisjonskadens","Bruk dette skjemaet som egenrevisjon","Logg gjennomføring"]},
+{id:"L7",kat:"ledelse",kl:"kritisk",flag:0,hurtig:0,
+ q:"Eskaleres helsemessige avvik riktig – Regionleder varsles umiddelbart + mail til avvik@jbp.no?",
+ why:"1.6: mulig matforgiftning, beinrester og allergiske reaksjoner skal varsles Regionleder MED ÉN GANG + avvik@jbp.no.",
+ ver:["Dokumentasjon: eskaleringsrutine kjent/brukt","Spørsmål: hva gjør du ved mistenkt matforgiftning?"],
+ avvik:["Ansatte vet ikke eskaleringsvei","Helseavvik håndteres bare lokalt","Ingen melding til Servicekontoret"],
+ tiltak:["Heng opp eskaleringsrutine (Regionleder + avvik@jbp.no)","Tren scenario matforgiftning/allergisk reaksjon","Bruk intervjuskjema 4.11 ved mistanke"]},
+{id:"LO1",kat:"ledelse",onb:1,kl:"kritisk",flag:1,hurtig:1,
+ q:"Ny daglig leder: har vedkommende gjennomgått og signert IK-opplæring FØR selvstendig drift?",
+ why:"Lederbytte er det punktet der etterlevelsen ofte ryker. Ny daglig leder skal kjenne kritiske rutiner (hygiene, nedkjøling, allergen) før selvstendig drift.",
+ ver:["Dokumentasjon: signert opplæringsplan for ny leder","Spørsmål: be ny leder forklare nedkjøling, renhold og allergen i praksis"],
+ avvik:["Ny leder driver uten dokumentert IK-opplæring","Ny leder lite til stede","Kjenner ikke kritiske rutiner"],
+ tiltak:["Fullfør og signer IK-opplæring før selvstendig drift","Tett oppfølging fra regionleder første periode","Praktisk gjennomgang av nedkjøling/renhold/allergen"]},
+{id:"LO2",kat:"ledelse",onb:1,kl:"viktig",flag:0,hurtig:0,
+ q:"Er overlevering/overlapp dokumentert ved lederbyttet (rutiner, avvik, status)?",
+ why:"Uten overlapp forsvinner kjennskap til åpne avvik, utstyr og rutiner med forrige leder.",
+ ver:["Dokumentasjon: overleveringsnotat/overlapp","Spørsmål: hva ble overlevert, og hva mangler?"],
+ avvik:["Ingen overlapp ved bytte","Åpne avvik ikke overført","Utstyr/innstillinger ikke forklart"],
+ tiltak:["Lag overleveringssjekkliste ved lederbytte","Overfør åpne avvik formelt","Dokumentér utstyr/innstillinger"]},
+{id:"LO3",kat:"ledelse",onb:1,kl:"kritisk",flag:0,hurtig:0,
+ q:"Har regionleder verifisert – i praksis, på stedet – at ny leder mestrer de kritiske rutinene?",
+ why:"Avdelingsbesøk skal ha kvalitetsperspektiv, ikke bare drift og relasjon. Verifisering betyr å kontrollere i praksis – ikke at leder sier det er i orden.",
+ ver:["Dokumentasjon: regionleders verifiseringsnotat m/dato","Observasjon: så regionleder etter det Mattilsynet ser etter?"],
+ avvik:["Besøk uten kvalitetssjekk","«Det går bra» uten verifisering","Ingen praktisk kontroll av ny leder"],
+ tiltak:["Regionleder verifiserer kritiske rutiner på stedet","Bruk dette skjemaet ved lederbytte","Sett verifiseringsdato, ikke bare oppfølging"]},
+/* ---------- SKJENKING / IK-ALKOHOL (betinget) ---------- */
+{id:"AL1",kat:"alkohol",alk:1,kl:"kritisk",flag:1,hurtig:1,
+ q:"Alderskontroll: kreves legitimasjon ved enhver tvil om alder før skjenking?",
+ why:"Skjenking til mindreårig er et av de alvorligste bruddene (prikktildeling/inndragning). Aldersgrense 18/20 år.",
+ ver:["Observasjon: be om ID-praksis","Spørsmål: ved hvilken tvil ber du om legitimasjon?"],
+ avvik:["Skjenker uten ID-sjekk ved tvil","Usikker på aldersgrenser (18 vs 20)","Mindreårig servert"],
+ tiltak:["Innfør fast ID-rutine ved tvil","Repetér aldersgrenser 18/20","Registrer avvik + meld nærmeste leder"]},
+{id:"AL2",kat:"alkohol",alk:1,kl:"kritisk",flag:1,hurtig:1,
+ q:"Nektes åpenbart påvirkede personer skjenking, og iverksettes aktivitetsplikt (de må forlate lokalet)?",
+ why:"Bevillingshavers aktivitetsplikt: åpenbart påvirkede må forlate. Brudd gir prikker/inndragning.",
+ ver:["Observasjon: praksis ved beruset gjest","Spørsmål: hva gjør du når en gjest er åpenbart påvirket?"],
+ avvik:["Skjenker åpenbart påvirket","Lar beruset gjest bli uten tiltak"],
+ tiltak:["Skjenkenekt + få vedkommende ut (aktivitetsplikt)","Tren personalet på vurdering av påvirkning","Logg hendelsen"]},
+{id:"AL3",kat:"alkohol",alk:1,kl:"kritisk",flag:0,hurtig:0,
+ q:"Ivaretas bistandsplikten når en gjest er ute av stand til å ta vare på seg selv (taxi/politi/ambulanse)?",
+ why:"Bistandsplikt: konkrete steg (ringe taxi/politi/ambulanse) + kontinuerlig tilsyn til vedkommende er ivaretatt.",
+ ver:["Spørsmål: hva gjør du hvis en gjest ikke klarer seg selv?"],
+ avvik:["Sender hjelpeløs gjest ut alene","Ingen oppfølging/tilsyn"],
+ tiltak:["Innfør bistandsrutine (taxi/politi/ambulanse)","Kontinuerlig tilsyn til hjelp er på plass"]},
+{id:"AL4",kat:"alkohol",alk:1,kl:"kritisk",flag:1,hurtig:0,
+ q:"Overholdes skjenketider og skjenkestopp iht bevilling?",
+ why:"Skjenking utenfor tillatt tid er et klart brudd på bevillingsvilkår.",
+ ver:["Observasjon/dokumentasjon: bevillingens skjenketider","Spørsmål: når er skjenkestopp her?"],
+ avvik:["Skjenker etter tillatt tid","Ansatte usikre på tidene"],
+ tiltak:["Heng opp skjenketider synlig","Innskjerp skjenkestopp-rutine"]},
+{id:"AL5",kat:"alkohol",alk:1,kl:"kritisk",flag:0,hurtig:0,
+ q:"Håndterer mindreårige ansatte ikke salg/bestilling av alkohol (men kan rydde, servere mat, oppvask)?",
+ why:"Under 18 kan ikke være involvert i selve alkoholsalget; kan rydde bord, oppvask, fylle buffet, klargjøre takeaway, servere mat – men ved alkoholbestilling hentes voksen.",
+ ver:["Observasjon: hvem tar imot alkoholbestillinger?","Spørsmål: hva gjør en under 18 hvis gjest vil bestille alkohol?"],
+ avvik:["Mindreårig tar imot/serverer alkoholbestilling","Uklart hvem som kan skjenke"],
+ tiltak:["Klargjør hvem som kan skjenke","Tren mindreårige: hent voksen ved alkoholbestilling"]},
+{id:"AL6",kat:"alkohol",alk:1,kl:"viktig",flag:0,hurtig:0,
+ q:"Følges stengerutiner for skjenkestedet?",
+ why:"Stengerutiner er del av IK-Alkohol (Ansvarlig vertskap) og reduserer konflikt/risiko.",
+ ver:["Dokumentasjon: stengerutine i IK-Alkohol","Spørsmål: gå gjennom stengerutinen"],
+ avvik:["Ingen definert stengerutine","Ansatte kjenner den ikke"],
+ tiltak:["Dokumentér stengerutine","Tren stenging på vakt"]},
+{id:"AL7",kat:"alkohol",alk:1,kl:"viktig",flag:0,hurtig:0,
+ q:"Vet ansatte hvordan håndtere truende/konfliktfylte situasjoner (rolig, lytte, passe avstand, hjelpsom)?",
+ why:"IK-Alkohol/Ansvarlig vertskap: konflikthåndtering beskytter ansatte og gjester.",
+ ver:["Spørsmål: hvordan håndterer du en truende gjest?","Dokumentasjon: konflikthåndtering i IK"],
+ avvik:["Ingen kjent konflikthåndtering","Ansatte utrygge"],
+ tiltak:["Tren konflikthåndtering (rolig, lytte, avstand)","Klare rutiner for når politi tilkalles"]},
+{id:"AL8",kat:"alkohol",alk:1,kl:"kritisk",flag:0,hurtig:0,
+ q:"Er IK-Alkohol oppdatert og kunnskapsprøve/opplæring dokumentert (styrer/stedfortreder/ansatte)?",
+ why:"Bevillingshaver ansvarlig for IK-Alkohol (HMSdesign). Daglig leder + styrer + stedfortreder vedlikeholder; kunnskapsprøve kreves.",
+ ver:["Dokumentasjon: IK-Alkohol håndbok + kunnskapsprøve/opplæring","Spørsmål: hvem er styrer og stedfortreder?"],
+ avvik:["Utdatert IK-Alkohol","Manglende kunnskapsprøve","Styrer/stedfortreder uklar"],
+ tiltak:["Oppdater IK-Alkohol","Dokumentér kunnskapsprøve/opplæring","Avklar styrer/stedfortreder"]},
+{id:"AL9",kat:"alkohol",alk:1,kl:"viktig",flag:0,hurtig:0,
+ q:"Registreres alkohol-avvik til nærmeste leder, og lukkes med tilbakemelding?",
+ why:"IK-Alkohol: alle skal rapportere avvik til nærmeste leder; ledere behandler innen ansvarsområde og gir tilbakemelding.",
+ ver:["Dokumentasjon: avviksskjema/forbedringsmelding alkohol","Spørsmål: hvor melder du et skjenkeavvik?"],
+ avvik:["Avvik ikke registrert","Ingen tilbakemelding til varsler"],
+ tiltak:["Bruk avviksskjema for skjenkeavvik","Lukk + kvittér med dato, gi tilbakemelding"]},
+];
+
+const FRIST={kritisk_flag:{lab:"Umiddelbar – samme dag (stopp servering/skjenking)",cls:"um",days:0},
+             kritisk:{lab:"24–48 timer",cls:"t24",days:2},
+             viktig:{lab:"14 dager",cls:"d14",days:14},
+             anbefalt:{lab:"30 dager",cls:"d14",days:30}};
+
+/* =================== STORAGE =================== */
+const mem={};
+const hasWS=(typeof window!=="undefined"&&window.storage&&window.storage.get);
+const hasLS=(()=>{try{const k="__jbp_t";localStorage.setItem(k,"1");localStorage.removeItem(k);return true;}catch(e){return false;}})();
+async function sget(k){
+  if(hasWS){try{const r=await window.storage.get(k);return r?JSON.parse(r.value):null;}catch(e){}}
+  if(hasLS){const v=localStorage.getItem(k);return v?JSON.parse(v):null;}
+  return mem[k]??null;}
+async function sset(k,v){mem[k]=v;
+  if(hasWS){try{await window.storage.set(k,JSON.stringify(v));return;}catch(e){}}
+  if(hasLS){try{localStorage.setItem(k,JSON.stringify(v));return;}catch(e){}}}
+async function slist(p){
+  if(hasWS){try{const r=await window.storage.list(p);if(r)return r.keys;}catch(e){}}
+  if(hasLS){return Object.keys(localStorage).filter(x=>x.startsWith(p));}
+  return Object.keys(mem).filter(x=>x.startsWith(p));}
+async function sdel(k){delete mem[k];
+  if(hasWS){try{await window.storage.delete(k);return;}catch(e){}}
+  if(hasLS){try{localStorage.removeItem(k);}catch(e){}}}
+
+/* =================== STATE =================== */
+let A=null,route="home";
+const $=s=>document.querySelector(s);
+const esc=s=>(s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const AVDELINGSMODUS=true; // personvern: lagre roller, ikke navn
+const ROLLER=["Regionleder","Regional salgsleder","Nestleder","Café-eier","Annet"];
+function roleOpts(val){return '<option value="">— rolle —</option>'+ROLLER.map(function(r){return '<option'+(val===r?' selected':'')+'>'+r+'</option>';}).join('');}
+function roleField(id,val){return AVDELINGSMODUS?('<select id="'+id+'" class="fld" style="flex:1">'+roleOpts(val)+'</select>'):('<input id="'+id+'" class="fld" style="flex:1" value="'+esc(val||'')+'">');}
+function newAudit(mode){return {id:"audit_"+Date.now(),mode,date:new Date().toISOString(),avdeling:"",ansvarlig:"",revisor:"",harAlkohol:false,nyttLederbytte:false,ledelsesvurdering:"",finalized:false,finalizedAt:null,finalizedBy:"",naReason:{},updatedAt:Date.now(),answers:{},devs:{}};}
+function pointsFor(a){return CP.filter(p=>{if(p.alk&&!a.harAlkohol)return false;if(p.onb&&!a.nyttLederbytte)return false;return a.mode==="hurtig"?p.hurtig:true;});}
+
+/* =================== SCORING =================== */
+function compute(a){
+  const cats=Object.keys(WEIGHTS),catAgg={};cats.forEach(c=>catAgg[c]=[0,0]);
+  const pts=pointsFor(a);let answered=0,applicable=0,ok=0;
+  const redFlags=[],kritisk=[],viktig=[],anbefalt=[],avvik=[];
+  pts.forEach(p=>{const v=a.answers[p.id];if(v===undefined)return;answered++;if(v==="na")return;applicable++;
+    catAgg[p.kat][1]++;
+    if(v==="avvik"){avvik.push(p);if(p.flag)redFlags.push(p);else if(p.kl==="kritisk")kritisk.push(p);else if(p.kl==="viktig")viktig.push(p);else anbefalt.push(p);}
+    else{ok++;catAgg[p.kat][0]++;}});
+  // Status: rødt flagg -> RØD; kritisk/viktig avvik -> GUL; ellers (kun anbefalt eller ingen) -> GRØNN
+  const status=redFlags.length?"RØD":(kritisk.length||viktig.length)?"GUL":"GRØNN";
+  const pct=applicable>0?Math.round(ok/applicable*100):0; // sekundær: % innen standard
+  const catPct={};for(const c of cats){const[g,m]=catAgg[c];catPct[c]=m>0?Math.round(g/m*100):null;}
+  const total=pts.length;const complete=answered===total;
+  return {pct,status,redFlags,kritisk,viktig,anbefalt,avvik,answered,total,complete,catPct};
+}
+
+/* =================== RECURRING =================== */
+async function recurringIds(currentId){
+  const keys=await slist("audit_");const ids=new Set();
+  for(const k of keys){if(k.includes(currentId))continue;const a=await sget(k);if(!a||!a.devs)continue;
+    Object.keys(a.devs).forEach(id=>{if(a.devs[id]&&a.devs[id].active)ids.add(id);});}
+  return ids;
+}
+
+/* =================== RENDER =================== */
+function setFab(h){$("#fab").innerHTML=h||"";}
+function crumb(){const c=$("#crumb");
+  if(route==="home"){c.innerHTML='<span>Velg revisjon for å starte</span>';return;}
+  const label=route==="audit"?(A.mode==="hurtig"?"Hurtigrevisjon":"Full revisjon"):route==="report"?"Rapport":route==="history"?"Historikk":route==="followup"?"Oppfølgingsplan":"";
+  c.innerHTML=`<button onclick="go('home')">← Hjem</button><span>${esc(label)}</span>`;}
+async function go(r){route=r;crumb();if(r==="home")return renderHome();if(r==="audit")return renderAudit();if(r==="report")return renderReport();if(r==="history")return renderHistory();if(r==="followup")return renderFollowup();}
+
+/* ---------- HOME ---------- */
+async function renderHome(){
+  setFab("");
+  const hist=await loadHistory();const last=hist[0];
+  const hq=pointsFor({mode:"hurtig",harAlkohol:false,nyttLederbytte:false}).length;
+  const fq=pointsFor({mode:"full",harAlkohol:false,nyttLederbytte:false}).length;
+  const alkF=CP.filter(p=>p.alk&&p.hurtig).length, alkA=CP.filter(p=>p.alk).length;
+  $("#view").innerHTML=`
+  <div class="assume">
+    <b>Nøkkelverdier (IK-Mat)</b> – kjøl ≤ 4 °C · frys ≤ −18 °C (lagring), maks −15 °C (mottak) ·
+    varmebehandling kjernetemp ≥ <b>80 °C</b> · nedkjøling 60→10 °C ≤ 2 t · varmholding ≥ 60 °C ·
+    allergenmeny sentralstyrt (Servicekontoret) · røde fjøler til rå kylling · skadedyr: Rentokil.
+  </div>
+  ${AVDELINGSMODUS?'<div class="assume" style="background:#eef4ee;border-color:#cfe3cf"><b>Avdelingsmodus (personvern):</b> Verktøyet lagrer <b>roller, ikke navn</b>, og vurderer avdelingens etterlevelse – ikke enkeltpersoner. Ikke fotografér eller navngi identifiserbare personer. <a href="personvern.html" style="color:var(--berry)">Personvern</a></div>':''}
+
+  <div class="card" style="margin-top:14px">
+    <span class="cat">Start revisjon</span>
+    <div class="menu-item">
+      <div><div class="lab">Hurtigrevisjon</div><div class="small muted">${hq} punkter · speiler oppstartskontrollen · 15–30 min${alkF?` · +${alkF} v/skjenking`:""}</div></div>
+      <button class="btn berry sm" onclick="start('hurtig')">Start</button>
+    </div>
+    <div class="menu-item">
+      <div><div class="lab">Full revisjon</div><div class="small muted">${fq} punkter · mat, drift, konsept, ledelse · +${alkA} v/skjenking</div></div>
+      <button class="btn primary sm" onclick="start('full')">Start</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="cat">Modell</span>
+    <div class="small" style="margin-top:8px">
+      <b>Score (modenhet):</b> hvert punkt 0 / 1 / 2 / N/A. Vektet: Mattrygghet 45 %, Drift 20 %, Konsept 17 %, Ledelse 13 %, Skjenking 15 % (renormaliseres uten skjenking).<br>
+      <b>Bånd:</b> <span class="s-GRØNN">Grønn = ingen avvik</span> · <span class="s-GUL">Gul = kritisk/viktig avvik</span> · <span class="s-RØD">Rød = rødt flagg</span>.<br>
+      <b>Red flag (port):</b> avvik på et kritisk mattrygghets-/lov-/skjenkepunkt → <span class="s-RØD">automatisk RØD</span>, umiddelbar frist.<br>
+      <b>Helsemessige avvik</b> (matforgiftning/beinrester/allergisk reaksjon): Regionleder umiddelbart + avvik@jbp.no.
+    </div>
+  </div>
+
+  <div class="card" id="followup-card">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <span class="cat">Oppfølgingsplan</span><a class="link small" onclick="go('followup')">Åpne →</a>
+    </div>
+    <p class="small muted" style="margin:8px 0 0" id="followup-summary">Laster åpne tiltak…</p>
+  </div>
+
+  <div class="card">
+    <span class="cat">Data & kontroll</span>
+    <p class="tiny muted" style="margin:8px 0 10px">Del data mellom enheter: feltlederen eksporterer, du importerer for å se alt samlet og kvittere ut tiltak. (Automatisk sentral synk krever backend.)</p>
+    <div class="row"><button class="btn ghost sm" onclick="exportAll()">Eksporter alle data</button><button class="btn ghost sm" onclick="triggerImport()">Importer (slå sammen)</button></div>
+  </div>
+
+  <div class="card">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <span class="cat">Historikk</span><a class="link small" onclick="go('history')">Se alle →</a>
+    </div>
+    ${last?`<div class="hist" style="border:0;padding-top:10px">
+      <div><div class="lab">${esc(last.avdeling||"Uten avdeling")}</div><div class="tiny muted">${fmtDate(last.date)} · ${last.mode==="hurtig"?"Hurtig":"Full"}</div></div>
+      <div class="s s-${last._status}">${last._pct}% · ${last._status}</div></div>`
+    :`<p class="small muted" style="margin:10px 0 0">Ingen lagrede revisjoner ennå.</p>`}
+  </div>`;
+  collectOpenDevs().then(list=>{const el=$("#followup-summary");if(!el)return;const today=new Date();today.setHours(0,0,0,0);
+    const overdue=list.filter(x=>x.frist&&x.frist<today).length;
+    el.innerHTML=list.length?`<b>${list.length}</b> åpne tiltak${overdue?` · <span class="s-RØD"><b>${overdue}</b> over frist</span>`:""}`:"Ingen åpne tiltak.";});
+}
+function start(mode){A=newAudit(mode);sset(A.id,A);go('audit');}
+
+/* ---------- AUDIT ---------- */
+async function renderAudit(){
+  const pts=pointsFor(A);const recur=await recurringIds(A.id);const r=compute(A);
+  let body=`
+  <div class="card">
+    <span class="cat">Revisjonsdetaljer</span>
+    <label class="tiny muted" style="display:block;margin:10px 0 4px;font-weight:700">AVDELING</label>
+    <input id="f-avd" class="fld" placeholder="Avdeling / lokasjon" value="${esc(A.avdeling)}">
+    <div class="row" style="margin-top:8px">
+      ${roleField("f-ans",A.ansvarlig)}
+      ${roleField("f-rev",A.revisor)}
+    </div>
+    <label class="tiny muted" style="display:block;margin:12px 0 4px;font-weight:700">HAR AVDELINGEN SKJENKEBEVILLING?</label>
+    <div class="seg" id="seg-alk">
+      <button data-v="ja" class="${A.harAlkohol?'on':''}">Ja</button>
+      <button data-v="nei" class="${!A.harAlkohol?'on':''}">Nei</button>
+    </div>
+    ${A.harAlkohol?'<div class="tiny" style="margin-top:6px;color:var(--wine);font-weight:700">Skjenkemodul aktiv – IK-Alkohol-punkter lagt til.</div>':''}
+    <label class="tiny muted" style="display:block;margin:12px 0 4px;font-weight:700">NYTT LEDERBYTTE SISTE 6 MND?</label>
+    <div class="seg" id="seg-onb">
+      <button data-v="ja" class="${A.nyttLederbytte?'on':''}">Ja</button>
+      <button data-v="nei" class="${!A.nyttLederbytte?'on':''}">Nei</button>
+    </div>
+    ${A.nyttLederbytte?'<div class="tiny" style="margin-top:6px;color:var(--berry);font-weight:700">Onboarding-kontroll aktiv – ekstra ledelsespunkter ved lederbytte.</div>':''}
+    <div class="prog"><i style="width:${Math.round(r.answered/r.total*100)}%"></i></div>
+    <div class="tiny muted" style="margin-top:6px">${r.answered}/${r.total} besvart${r.redFlags.length?` · <span class="s-RØD">${r.redFlags.length} rødt flagg</span>`:""}</div>
+  </div>`;
+  CATORDER.forEach((cat,ci)=>{const cps=pts.filter(p=>p.kat===cat);if(!cps.length)return;const isAlk=cat==="alkohol";
+    body+=`<div class="sectionhead ${isAlk?'alk':''}"><span class="n">${ci+1}</span><h3>${CATNAME[cat]}</h3></div>`;
+    cps.forEach(p=>{body+=cpCard(p,recur.has(p.id));});});
+  $("#view").innerHTML=body;
+  const map={avd:"avdeling",ans:"ansvarlig",rev:"revisor"};
+  ["avd","ans","rev"].forEach(k=>{const el=$("#f-"+k);const h=e=>{A[map[k]]=e.target.value;saveA();};el.addEventListener("input",h);el.addEventListener("change",h);});
+  $("#seg-alk").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{A.harAlkohol=(b.dataset.v==="ja");saveA();renderAudit();}));
+  $("#seg-onb").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{A.nyttLederbytte=(b.dataset.v==="ja");saveA();renderAudit();}));
+  bindCps();
+  if(A.finalized){const b=document.createElement("div");b.className="lockbanner";b.innerHTML="<b>Ferdigstilt og låst.</b> Denne revisjonen er signert og kan ikke endres. Oppfølging av tiltak skjer i Oppfølgingsplanen.";$("#view").prepend(b);
+    document.querySelectorAll("#view input,#view textarea,#view select,#view .sbtn,#view .chip,#view .seg button,#view .addt,#view .photoin").forEach(el=>{el.disabled=true;el.style.pointerEvents="none";el.style.opacity=".6";});}
+  setFab(`<button class="btn ghost" onclick="go('home')">Avslutt</button><button class="btn primary" onclick="go('report')">Se rapport →</button>`);
+}
+function cpCard(p,isRecur){
+  const v=A.answers[p.id];const flagOn=p.flag&&v==="avvik";const dev=A.devs[p.id]||{};const showDev=(v==="avvik");const f=fristFor(p);
+  return `<div class="card cp ${p.alk?'alkcard':''}" id="cp-${p.id}">
+    <div class="row wrap" style="gap:6px;align-items:center">
+      <span class="pill ${p.kl==='kritisk'?'krit':p.kl==='viktig'?'vikt':'anbe'}">${p.kl}</span>
+      ${p.flag?'<span class="pill flag">Red flag</span>':''}
+      ${isRecur?'<span class="recur">Gjentakende</span>':''}
+      <span class="tiny muted" style="margin-left:auto">${p.id}</span>
+    </div>
+    <div class="q">${esc(p.q)}</div><div class="why">${esc(p.why)}</div>
+    <details class="acc"><summary>Hvordan verifisere · typiske avvik <span>＋</span></summary>
+      <div class="body"><b>Verifiser:</b><ul>${p.ver.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+        <b style="display:block;margin-top:8px">Typiske avvik:</b><ul>${p.avvik.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    </details>
+    <div class="score-row" data-id="${p.id}">
+      <button class="sbtn" data-v="ok" ${v==="ok"?'data-on="ok"':''}>OK<small>oppfylt</small></button>
+      <button class="sbtn" data-v="avvik" ${v==="avvik"?'data-on="avvik"':''}>Avvik<small>ikke oppfylt</small></button>
+      <button class="sbtn" data-v="na" ${v==="na"?'data-on="na"':''}>Ikke aktuelt<small>gjelder ikke</small></button>
+    </div>
+    <div class="flagnote ${flagOn?'show':''}" id="flag-${p.id}">⚠ Rødt flagg utløst – overstyrer score til RØD. Umiddelbar handling.</div>
+    <div class="nareason ${v==='na'?'show':''}" id="na-${p.id}">
+      <label class="tiny" style="font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)">Hvorfor N/A?</label>
+      <input data-na="${p.id}" value="${esc((A.naReason||{})[p.id]||'')}" placeholder="Kort begrunnelse (for sporbarhet)">
+    </div>
+    <div class="dev ${showDev?'show':''}" id="dev-${p.id}">
+      <label>Foreslåtte tiltak (trykk for å velge)</label>
+      <div>${p.tiltak.map(t=>`<span class="chip ${(dev.tiltak||[]).includes(t)?'on':''}" data-tiltak="${esc(t)}">${esc(t)}</span>`).join("")}${(dev.tiltak||[]).filter(t=>!p.tiltak.includes(t)).map(t=>`<span class="chip on" data-tiltak="${esc(t)}">${esc(t)}</span>`).join("")}</div>
+      <div class="row" style="margin-top:6px"><input class="fld custt" data-id="${p.id}" placeholder="Eget tiltak…" style="flex:1"><button class="btn ghost sm addt" data-id="${p.id}" type="button">Legg til</button></div>
+      <label>Avviksbeskrivelse</label><textarea data-f="beskrivelse" placeholder="Beskriv forholdet – ikke navngi enkeltpersoner">${esc(dev.beskrivelse||"")}</textarea>
+      <label>Rotårsak (5x hvorfor – ikke overflate)</label><textarea data-f="rotaarsak" placeholder="Beskriv rutine/system – ikke person">${esc(dev.rotaarsak||"")}</textarea>
+      <label>Bildebevis (valgfritt, maks 3)</label>
+      ${AVDELINGSMODUS?'<div class="tiny" style="color:var(--amber);font-weight:700;margin:2px 0 6px">\u26a0 Ikke fotografér identifiserbare personer.</div>':''}
+      <div class="thumbs" id="th-${p.id}"></div>
+      <input type="file" accept="image/*" capture="environment" class="photoin" data-id="${p.id}">
+      <div class="row"><div style="flex:1"><label>Ansvarlig (rolle)</label>${AVDELINGSMODUS?`<select data-f="ansvarlig" class="fld">${roleOpts(dev.ansvarlig)}</select>`:`<input data-f="ansvarlig" value="${esc(dev.ansvarlig||"")}" placeholder="Navn/rolle">`}</div>
+        <div style="flex:1"><label>Frist</label><input type="date" data-f="frist" value="${esc(dev.frist||(p.flag?isoToday():isoPlus(f.days)))}" ${p.flag?`max="${isoToday()}"`:''}></div></div>
+      ${p.flag?'<div class="tiny s-RØD" style="margin-top:6px;font-weight:700">Rødt flagg – frist låst til i dag (umiddelbar).</div>':`<div class="tiny" style="margin-top:6px">Anbefalt frist: <span class="frist ${f.cls}">${f.lab}</span></div>`}
+      <label>Verifisering (hvordan bekreftes lukking?)</label><input data-f="verifisering" value="${esc(dev.verifisering||"")}" placeholder="F.eks. kontrollmåling / ny logg / stikkprøve neste besøk">
+      <label>Status (lukket mot tilsyn/internt)</label><select data-f="status">${["Åpen","Under arbeid","Lukket"].map(s=>`<option ${(dev.status||"Åpen")===s?"selected":""}>${s}</option>`).join("")}</select>
+      <label>Effekt verifisert? (lukking ≠ verifisering)</label>
+      <div class="row"><div style="flex:1"><select data-f="verifisert">${["Ikke verifisert","Verifisert"].map(s=>`<option ${(dev.verifisert||"Ikke verifisert")===s?"selected":""}>${s}</option>`).join("")}</select></div>
+        <div style="flex:1"><input type="date" data-f="verifisertDato" value="${esc(dev.verifisertDato||"")}"></div></div>
+    </div>
+  </div>`;
+}
+function fristFor(p){if(p.flag)return FRIST.kritisk_flag;if(p.kl==="kritisk")return FRIST.kritisk;if(p.kl==="viktig")return FRIST.viktig;return FRIST.anbefalt;}
+function fristDateStr(d){const x=new Date();x.setDate(x.getDate()+d);return x.toLocaleDateString("nb-NO");}
+function bindCps(){
+  document.querySelectorAll(".score-row").forEach(row=>{const id=row.dataset.id;
+    row.querySelectorAll(".sbtn").forEach(b=>b.addEventListener("click",()=>{
+      const raw=b.dataset.v;A.answers[id]=raw;
+      row.querySelectorAll(".sbtn").forEach(x=>x.removeAttribute("data-on"));b.setAttribute("data-on",raw);
+      const p=CP.find(x=>x.id===id);const flagOn=p.flag&&raw==="avvik";$("#flag-"+id).classList.toggle("show",flagOn);
+      const na=document.getElementById("na-"+id);if(na)na.classList.toggle("show",raw==="na");
+      const showDev=(raw==="avvik");$("#dev-"+id).classList.toggle("show",showDev);
+      if(showDev){A.devs[id]=A.devs[id]||{tiltak:[],status:"Åpen",active:true,bilder:[]};A.devs[id].active=true;}else if(A.devs[id]){A.devs[id].active=false;}
+      saveA();updateMini();}));});
+  document.querySelectorAll("[data-na]").forEach(inp=>inp.addEventListener("input",()=>{A.naReason=A.naReason||{};A.naReason[inp.dataset.na]=inp.value;saveA();}));
+  document.querySelectorAll(".dev").forEach(panel=>{const id=panel.id.replace("dev-","");
+    panel.querySelectorAll("[data-f]").forEach(inp=>{const h=()=>{A.devs[id]=A.devs[id]||{tiltak:[],active:true,bilder:[]};A.devs[id][inp.dataset.f]=inp.value;saveA();};inp.addEventListener("input",h);inp.addEventListener("change",h);});
+    panel.querySelectorAll(".chip").forEach(ch=>ch.addEventListener("click",()=>{A.devs[id]=A.devs[id]||{tiltak:[],active:true,bilder:[]};const t=ch.dataset.tiltak;const arr=A.devs[id].tiltak||[];const k=arr.indexOf(t);if(k>=0)arr.splice(k,1);else arr.push(t);A.devs[id].tiltak=arr;ch.classList.toggle("on");saveA();}));});
+  document.querySelectorAll(".addt").forEach(btn=>btn.addEventListener("click",()=>{const id=btn.dataset.id;const inp=document.querySelector('.custt[data-id="'+id+'"]');const t=(inp.value||"").trim();if(!t)return;A.devs[id]=A.devs[id]||{tiltak:[],active:true,bilder:[]};A.devs[id].tiltak=A.devs[id].tiltak||[];if(!A.devs[id].tiltak.includes(t))A.devs[id].tiltak.push(t);inp.value="";saveA();renderAudit();}));
+  document.querySelectorAll(".photoin").forEach(inp=>inp.addEventListener("change",()=>{if(inp.files&&inp.files[0])handlePhoto(inp.dataset.id,inp.files[0]);}));
+  CP.forEach(p=>{const d=A.devs[p.id];if(d&&d.bilder&&d.bilder.length)renderThumbs(p.id);});
+}
+function updateMini(){const r=compute(A);const prog=$(".prog>i");if(prog)prog.style.width=Math.round(r.answered/r.total*100)+"%";
+  const t=document.querySelector(".prog")?.nextElementSibling;if(t)t.innerHTML=`${r.answered}/${r.total} besvart${r.redFlags.length?` · <span class="s-RØD">${r.redFlags.length} rødt flagg</span>`:""}`;}
+
+/* ---------- REPORT ---------- */
+async function renderReport(){
+  await sset(A.id,A);const r=compute(A);const recur=await recurringIds(A.id);
+  const devs=CP.filter(p=>A.devs[p.id]&&A.devs[p.id].active).map(p=>({p,d:A.devs[p.id]}));
+  const order={kritisk:0,viktig:1,anbefalt:2};devs.sort((a,b)=>order[a.p.kl]-order[b.p.kl]);
+  const openCount=devs.filter(x=>(x.d.status||"Åpen")!=="Lukket").length;
+  const unverified=devs.filter(x=>(x.d.verifisert||"Ikke verifisert")!=="Verifisert").length;
+  let body=`
+  <div class="print-head"><b style="font-family:Georgia,serif;font-size:1.2rem;color:var(--plum)">Jordbærpikene – Internrevisjonsrapport</b>
+    <div class="tiny muted">${esc(A.avdeling||"Uten avdeling")} · ${fmtDate(A.date)} · ${A.mode==="hurtig"?"Hurtigrevisjon":"Full revisjon"}</div></div>
+  ${!r.complete?`<div class="incomplete no-print"><b>UFULLSTENDIG:</b> ${r.answered} av ${r.total} punkter besvart. Score og bånd er foreløpige til alt er besvart – bruk N/A der punktet ikke gjelder.</div>`:''}
+  ${A.finalized?`<div class="lockbanner"><span class="finbadge">Ferdigstilt</span> ${fmtDate(A.finalizedAt)} av ${esc(A.finalizedBy||"–")}. Rapporten er låst; oppfølging skjer i Oppfølgingsplanen.</div>`:''}
+  <div class="statusbar ${r.status}"><div class="big">${r.status}${!r.complete?'<span style="font-size:.9rem"> (foreløpig)</span>':''}</div>
+    <div style="font-weight:700;margin-top:4px">${r.avvik.length} avvik${r.redFlags.length?` · ${r.redFlags.length} rødt flagg`:""}${r.complete?` · ${r.pct}% innen standard`:""}</div></div>
+  <div class="card">
+    <span class="cat">${esc(A.avdeling||"Uten avdeling")} · ${A.mode==="hurtig"?"Hurtigrevisjon":"Full revisjon"}${A.harAlkohol?" · m/skjenking":""}${A.nyttLederbytte?" · lederbytte":""}</span>
+    <div class="tiny muted" style="margin:6px 0 12px">${fmtDate(A.date)} · Ansvarlig (rolle): ${esc(A.ansvarlig||"–")} · Revisor (rolle): ${esc(A.revisor||"–")}</div>
+    <div class="kpi">
+      <div class="k"><b>${r.answered}/${r.total}</b><span class="small muted">besvart</span></div>
+      <div class="k"><b class="${r.redFlags.length?'s-RØD':'s-GRØNN'}">${r.redFlags.length}</b><span class="small muted">røde flagg</span></div>
+      <div class="k"><b class="${openCount?'s-GUL':'s-GRØNN'}">${openCount}</b><span class="small muted">åpne avvik</span></div>
+      <div class="k"><b class="${unverified?'s-GUL':'s-GRØNN'}">${unverified}</b><span class="small muted">ikke verifisert</span></div>
+    </div>
+    <hr class="sep">
+    <div class="small">${CATORDER.map(c=>{const v=r.catPct[c];if(v==null&&c==="alkohol")return"";
+      return `<div class="row" style="justify-content:space-between;padding:5px 0"><span>${CATNAME[c]} <span class="tiny muted">(${Math.round(WEIGHTS[c]*100)}%)</span></span><b class="${v==null?'muted':v>=90?'s-GRØNN':v>=75?'s-GUL':'s-RØD'}">${v==null?"–":v+"%"}</b></div>`;}).join("")}</div>
+  </div>`;
+  if(r.redFlags.length){body+=`<div class="card" style="border-color:#f3c4cc;background:var(--red-bg)">
+    <span class="cat" style="color:var(--red)">⚠ Røde flagg – umiddelbar handling</span>
+    ${r.redFlags.map(p=>`<div class="small" style="margin-top:8px"><b>${p.id}.</b> ${esc(p.q)}</div>`).join("")}</div>`;}
+  body+=`<div class="card"><span class="cat">Avvik & oppfølgingsplan</span>`;
+  if(!devs.length)body+=`<p class="small muted" style="margin:10px 0 0">Ingen avvik registrert.</p>`;
+  else devs.forEach(({p,d})=>{const f=fristFor(p);const isRec=recur.has(p.id);
+    body+=`<div class="devcard ${p.kl[0]}"><div class="h"><span>${p.id} · ${p.kl}${p.alk?" · skjenking":""}</span><span class="tiny ${(d.status||'Åpen')==='Lukket'?'s-GRØNN':'s-GUL'}">${esc(d.status||"Åpen")}</span></div>
+      <div style="margin:4px 0">${esc(p.q)}</div>
+      ${isRec?'<div class="recur" style="display:inline-block;margin:2px 0 6px">Gjentakende → ledelsesavvik</div>':''}
+      ${d.beskrivelse?`<div class="tiny"><b>Funn:</b> ${esc(d.beskrivelse)}</div>`:''}
+      ${d.rotaarsak?`<div class="tiny"><b>Rotårsak:</b> ${esc(d.rotaarsak)}</div>`:''}
+      ${(d.tiltak&&d.tiltak.length)?`<div class="tiny"><b>Tiltak:</b> ${d.tiltak.map(esc).join("; ")}</div>`:''}
+      <div class="tiny"><b>Ansvarlig:</b> ${esc(d.ansvarlig||"–")} · <b>Frist:</b> <span class="frist ${f.cls}">${esc(fmtFrist(d.frist)||fristDateStr(f.days))}</span></div>
+      ${d.verifisering?`<div class="tiny"><b>Verifiseres ved:</b> ${esc(d.verifisering)}</div>`:''}
+      <div class="tiny"><b>Effekt:</b> <span class="${(d.verifisert||'Ikke verifisert')==='Verifisert'?'s-GRØNN':'s-GUL'}">${esc(d.verifisert||"Ikke verifisert")}${d.verifisertDato?" ("+esc(fmtFrist(d.verifisertDato))+")":""}</span></div>
+      ${(d.lukketAv||d.lukketNotat)?`<div class="tiny"><b>Lukket av:</b> ${esc(d.lukketAv||'–')}${d.lukketNotat?" – "+esc(d.lukketNotat):""}</div>`:''}
+      ${d.bilder&&d.bilder.length?`<div class="thumbs">${d.bilder.map(b=>`<img src="${b}" class="thumb">`).join("")}</div>`:''}</div>`;});
+  body+=`</div>
+  <div class="card"><span class="cat">Ledelsesvurdering</span>
+    <p class="tiny muted no-print" style="margin:6px 0 8px">Er rutiner forstått og fulgt opp, eller er dette et ledelses-/etterlevelsesproblem?</p>
+    <textarea id="ledvur" class="fld no-print" style="min-height:90px" ${A.finalized?'readonly':''}>${esc(A.ledelsesvurdering||"")}</textarea>
+    <div class="small" style="display:none;white-space:pre-wrap" id="ledvur-print">${esc(A.ledelsesvurdering||"")}</div></div>
+  <div class="card no-print"><span class="cat">Dokumentér & ferdigstill</span>
+    <p class="tiny muted" style="margin:6px 0 10px">Skriv ut / lagre som PDF, eller kopiér tekst. Ferdigstilling låser rapporten som dokumentasjon.</p>
+    <button class="btn primary sm" style="margin:0 8px 8px 0" onclick="printReport()">Skriv ut / lagre som PDF</button>
+    <button class="btn ghost sm" style="margin-bottom:8px" onclick="showText()">Vis tekstrapport</button>
+    <div id="txtwrap"></div>
+    ${A.finalized?'<div class="tiny" style="margin-top:8px"><span class="finbadge">Ferdigstilt & låst</span></div>':(r.complete?`<hr class="sep"><button class="btn berry sm" onclick="finalizeAudit()">Ferdigstill & lås rapport</button>`:`<hr class="sep"><button class="btn ghost sm" disabled style="opacity:.5">Ferdigstill (fullfør alle punkter: ${r.answered}/${r.total})</button>`)}</div>`;
+  $("#view").innerHTML=body;
+  const lv=$("#ledvur"),lp=$("#ledvur-print");
+  $("#ledvur").addEventListener("input",e=>{A.ledelsesvurdering=e.target.value;if(lp)lp.textContent=e.target.value;sset(A.id,A);});
+  setFab(`<button class="btn ghost" onclick="go('audit')">← Tilbake</button><button class="btn primary" onclick="finish()">Lagre & avslutt</button>`);
+}
+function finish(){A.updatedAt=Date.now();sset(A.id,A);pushAudit(A);go('home');}
+function buildText(){
+  const r=compute(A);const devs=CP.filter(p=>A.devs[p.id]&&A.devs[p.id].active).map(p=>({p,d:A.devs[p.id]}));
+  let t=`JORDBÆRPIKENE – INTERNREVISJON\n${A.avdeling||"Uten avdeling"} | ${A.mode==="hurtig"?"Hurtigrevisjon":"Full revisjon"}${A.harAlkohol?" | m/skjenking":""} | ${fmtDate(A.date)}\n`;
+  t+=`Ansvarlig: ${A.ansvarlig||"-"}  Revisor: ${A.revisor||"-"}${A.finalized?" | FERDIGSTILT "+fmtDate(A.finalizedAt)+" av "+(A.finalizedBy||"-"):""}\n${r.complete?"":"** UFULLSTENDIG: "+r.answered+"/"+r.total+" besvart – foreløpig vurdering **\n"}\nRESULTAT: ${r.status} – ${r.avvik.length} avvik${r.redFlags.length?" ("+r.redFlags.length+" RØDT FLAGG)":""}${r.complete?" – "+r.pct+"% innen standard":""}\n`;
+  CATORDER.forEach(c=>{if(r.catPct[c]!=null)t+=`  ${CATNAME[c]}: ${r.catPct[c]}% innen standard\n`;});
+  if(r.redFlags.length){t+=`\nRØDE FLAGG (umiddelbar handling):\n`;r.redFlags.forEach(p=>t+=`  - ${p.id}: ${p.q}\n`);}
+  t+=`\nAVVIK & OPPFØLGING (${devs.length}):\n`;
+  devs.forEach(({p,d})=>{const f=fristFor(p);t+=`\n[${p.id} – ${p.kl}${p.flag?" – RED FLAG":""}${p.alk?" – skjenking":""}] ${d.status||"Åpen"}\n  Punkt: ${p.q}\n`;
+    if(d.beskrivelse)t+=`  Funn: ${d.beskrivelse}\n`;if(d.rotaarsak)t+=`  Rotårsak: ${d.rotaarsak}\n`;
+    if(d.tiltak&&d.tiltak.length)t+=`  Tiltak: ${d.tiltak.join("; ")}\n`;
+    t+=`  Ansvarlig: ${d.ansvarlig||"-"} | Frist: ${fmtFrist(d.frist)||fristDateStr(f.days)} (${f.lab})\n`;if(d.verifisering)t+=`  Verifiseres: ${d.verifisering}\n`;t+=`  Effekt: ${d.verifisert||"Ikke verifisert"}${d.verifisertDato?" ("+fmtFrist(d.verifisertDato)+")":""}\n`;if(d.lukketAv||d.lukketNotat)t+=`  Lukket av: ${d.lukketAv||"-"}${d.lukketNotat?" – "+d.lukketNotat:""}\n`;if(d.bilder&&d.bilder.length)t+=`  Bilder vedlagt: ${d.bilder.length}\n`;});
+  if(A.ledelsesvurdering)t+=`\nLEDELSESVURDERING:\n${A.ledelsesvurdering}\n`;
+  t+=`\nMerk: Helsemessige avvik (matforgiftning/beinrester/allergisk reaksjon) varsles Regionleder umiddelbart + avvik@jbp.no.\n`;
+  return t;}
+function showText(){$("#txtwrap").innerHTML=`<div class="copybox">${esc(buildText())}</div><button class="btn berry sm" style="margin-top:8px" onclick="copyText(event)">Kopiér</button>`;}
+function copyText(ev){navigator.clipboard?.writeText(buildText()).then(()=>{ev.target.textContent="Kopiert ✓";},()=>{});}
+
+/* ---------- HISTORY ---------- */
+async function loadHistory(){const keys=await slist("audit_");const arr=[];
+  for(const k of keys){const a=await sget(k);if(!a)continue;const r=compute(a);arr.push(Object.assign({},a,{_pct:r.pct,_status:r.status,_flags:r.redFlags.length}));}
+  arr.sort((a,b)=>new Date(b.date)-new Date(a.date));return arr;}
+async function renderHistory(){setFab(`<button class="btn primary" onclick="go('home')">← Hjem</button>`);
+  const arr=await loadHistory();
+  if(!arr.length){$("#view").innerHTML=`<div class="card"><p class="small muted">Ingen lagrede revisjoner ennå.</p></div>`;return;}
+  let body=`<div class="card"><span class="cat">Alle revisjoner (${arr.length})</span>`;
+  arr.forEach(a=>{body+=`<div class="hist"><div><div class="lab">${esc(a.avdeling||"Uten avdeling")}</div>
+    <div class="tiny muted">${fmtDate(a.date)} · ${a.mode==="hurtig"?"Hurtig":"Full"}${a.harAlkohol?" · skjenking":""}${a._flags?` · ${a._flags} flagg`:""}${a.finalized?" · ✔ ferdigstilt":""}</div></div>
+    <div style="text-align:right"><div class="s s-${a._status}">${a._pct}% · ${a._status}</div>
+    <button class="btn ghost sm" style="margin-top:6px;padding:6px 10px;font-size:.78rem" onclick="openAudit('${a.id}')">Åpne</button></div></div>`;});
+  body+=`</div>`;$("#view").innerHTML=body;}
+async function openAudit(id){const a=await sget(id);if(a){A=a;go('report');}}
+
+/* ---------- PRINT / PDF ---------- */
+function printReport(){window.print();}
+
+/* ---------- OPPFØLGINGSPLAN (løpende på tvers av revisjoner) ---------- */
+function parseFrist(s){if(!s)return null;s=String(s);let m=s.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m){const dt=new Date(+m[1],+m[2]-1,+m[3]);return isNaN(dt)?null:dt;}m=s.match(/(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{2,4})/);if(!m)return null;let[_,d,mo,y]=m;y=y.length===2?"20"+y:y;const dt=new Date(+y,+mo-1,+d);return isNaN(dt)?null:dt;}
+async function collectOpenDevs(){
+  const keys=await slist("audit_");const out=[];
+  for(const k of keys){const a=await sget(k);if(!a||!a.devs)continue;
+    CP.forEach(p=>{const d=a.devs[p.id];if(!d||!d.active)return;
+      const lukket=(d.status||"Åpen")==="Lukket";const verifisert=(d.verifisert||"Ikke verifisert")==="Verifisert";
+      if(lukket&&verifisert)return; // ferdig – ut av planen
+      out.push({auditId:a.id,avd:a.avdeling||"Uten avdeling",audDate:a.date,p,d,
+        status:d.status||"Åpen",verifisert:d.verifisert||"Ikke verifisert",
+        fristStr:d.frist||"",frist:parseFrist(d.frist)});});}
+  out.sort((x,y)=>{if(x.frist&&y.frist)return x.frist-y.frist;if(x.frist)return -1;if(y.frist)return 1;return 0;});
+  return out;}
+async function renderFollowup(){
+  setFab(`<button class="btn primary" onclick="go('home')">← Hjem</button>`);
+  const list=await collectOpenDevs();const today=new Date();today.setHours(0,0,0,0);
+  const overdue=list.filter(x=>x.frist&&x.frist<today).length;
+  let body=`<div class="card"><span class="cat">Oppfølgingsplan – åpne tiltak</span>
+    <p class="tiny muted" style="margin:6px 0 0">Alle avvik som ikke er både lukket og verifisert, på tvers av revisjoner. Sortert etter frist.</p>
+    <div class="kpi" style="margin-top:12px">
+      <div class="k"><b>${list.length}</b><span class="small muted">åpne tiltak</span></div>
+      <div class="k"><b class="${overdue?'s-RØD':'s-GRØNN'}">${overdue}</b><span class="small muted">over frist</span></div>
+    </div></div>`;
+  if(!list.length){body+=`<div class="card"><p class="small muted">Ingen åpne tiltak. Alt er lukket og verifisert.</p></div>`;}
+  else{body+=`<div class="card"><span class="cat">Tiltak (${list.length})</span>`;
+    list.forEach(x=>{const isOver=x.frist&&x.frist<today;
+      body+=`<div class="devcard ${x.p.kl[0]}" style="${isOver?'border-left-color:var(--red);background:var(--red-bg)':''}">
+        <div class="h"><span>${esc(x.avd)} · ${x.p.id}</span><span class="tiny ${isOver?'s-RØD':'s-GUL'}">${x.fristStr?esc(fmtFrist(x.fristStr)):"uten frist"}${isOver?' · OVER FRIST':''}</span></div>
+        <div style="margin:4px 0">${esc(x.p.q)}</div>
+        ${x.d.tiltak&&x.d.tiltak.length?`<div class="tiny"><b>Tiltak:</b> ${x.d.tiltak.map(esc).join("; ")}</div>`:''}
+        <div class="tiny"><b>Ansvarlig:</b> ${esc(x.d.ansvarlig||"–")} · fra ${fmtDate(x.audDate)}</div>
+        <div class="fuctl no-print">
+          <select onchange="fuUpdate('${x.auditId}','${x.p.id}','status',this.value)">${["Åpen","Under arbeid","Lukket"].map(o=>`<option ${x.status===o?"selected":""}>${o}</option>`).join("")}</select>
+          <select onchange="fuUpdate('${x.auditId}','${x.p.id}','verifisert',this.value)">${["Ikke verifisert","Verifisert"].map(o=>`<option ${x.verifisert===o?"selected":""}>${o}</option>`).join("")}</select>
+        </div>
+        <div class="fuctl no-print">
+          ${AVDELINGSMODUS?`<select onchange="fuUpdate('${x.auditId}','${x.p.id}','lukketAv',this.value)"><option value="">— lukket av (rolle) —</option>${ROLLER.map(r=>`<option ${x.d.lukketAv===r?'selected':''}>${r}</option>`).join('')}</select>`:`<input placeholder="Lukket av" value="${esc(x.d.lukketAv||'')}" onchange="fuUpdate('${x.auditId}','${x.p.id}','lukketAv',this.value)">`}
+          <input placeholder="Lukkenotat" value="${esc(x.d.lukketNotat||'')}" onchange="fuUpdate('${x.auditId}','${x.p.id}','lukketNotat',this.value)">
+        </div>
+        <button class="btn berry sm no-print" style="margin-top:8px" onclick="fuClose('${x.auditId}','${x.p.id}')">Marker lukket + verifisert</button>
+      </div>`;});
+    body+=`</div><button class="btn ghost sm no-print" onclick="printReport()" style="margin-bottom:14px">Skriv ut / lagre som PDF</button>`;}
+  $("#view").innerHTML=body;
+}
+
+function fmtDate(iso){try{return new Date(iso).toLocaleDateString("nb-NO",{day:"2-digit",month:"short",year:"numeric"});}catch(e){return iso;}}
+
+/* ---------- v4 hjelpere: lagring, dato, bilder, eksport/import ---------- */
+function isoToday(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function isoPlus(n){const d=new Date();d.setDate(d.getDate()+(n||0));return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function fmtFrist(s){if(!s)return"";const dt=parseFrist(s);return dt?dt.toLocaleDateString("nb-NO"):s;}
+let _lastToast=0,_tt;
+function toast(msg){let el=document.getElementById("toast");if(!el){el=document.createElement("div");el.id="toast";el.className="toast";document.body.appendChild(el);}el.textContent=msg||"Lagret \u2713";el.classList.add("show");clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove("show"),1400);}
+function saveA(){A.updatedAt=Date.now();sset(A.id,A);const now=Date.now();if(now-_lastToast>1200){_lastToast=now;toast();}}
+function handlePhoto(id,file){const MAX=1000;const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{let w=img.width,h=img.height;const sc=Math.min(1,MAX/Math.max(w,h));const cw=Math.round(w*sc),ch=Math.round(h*sc);const cv=document.createElement("canvas");cv.width=cw;cv.height=ch;cv.getContext("2d").drawImage(img,0,0,cw,ch);const b64=cv.toDataURL("image/jpeg",0.55);A.devs[id]=A.devs[id]||{tiltak:[],active:true,bilder:[]};A.devs[id].bilder=A.devs[id].bilder||[];if(A.devs[id].bilder.length>=3){toast("Maks 3 bilder");return;}A.devs[id].bilder.push(b64);saveA();renderThumbs(id);};img.src=rd.result;};rd.readAsDataURL(file);}
+function renderThumbs(id){const el=document.getElementById("th-"+id);if(!el)return;const d=A.devs[id]||{};el.innerHTML=(d.bilder||[]).map((b,i)=>`<span class="thumbwrap"><img src="${b}" class="thumb"><button type="button" onclick="removePhoto('${id}',${i})">\u00d7</button></span>`).join("");}
+function removePhoto(id,i){const d=A.devs[id];if(!d||!d.bilder)return;d.bilder.splice(i,1);saveA();renderThumbs(id);}
+function finalizeAudit(){const r=compute(A);if(!r.complete){toast("Fullf\u00f8r alle punkter f\u00f8rst");return;}if(!AVDELINGSMODUS&&!A.revisor){toast("Fyll inn revisor f\u00f8r ferdigstilling");return;}A.finalized=true;A.finalizedAt=new Date().toISOString();A.finalizedBy=A.revisor||"(avdelingsmodus)";saveA();pushAudit(A);toast("Rapport ferdigstilt og l\u00e5st");renderReport();}
+async function exportAll(){const keys=await slist("audit_");const audits=[];for(const k of keys){const a=await sget(k);if(a)audits.push(a);}
+  const blob=new Blob([JSON.stringify({type:"jbp-revisjon",exportedAt:new Date().toISOString(),audits},null,1)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);const el=document.createElement("a");el.href=url;el.download="jbp-revisjon-eksport-"+isoToday()+".json";document.body.appendChild(el);el.click();el.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);toast("Eksportert "+audits.length+" revisjoner");}
+function triggerImport(){const inp=document.createElement("input");inp.type="file";inp.accept="application/json,.json";inp.onchange=()=>{if(inp.files&&inp.files[0])doImport(inp.files[0]);};inp.click();}
+async function doImport(file){try{const txt=await file.text();const data=JSON.parse(txt);const arr=data.audits||(Array.isArray(data)?data:[]);let n=0;for(const a of arr){if(!a||!a.id)continue;const ex=await sget(a.id);if(!ex||((a.updatedAt||0)>=(ex.updatedAt||0))){await sset(a.id,a);n++;}}toast("Importert/oppdatert "+n+" revisjoner");renderHome();}catch(e){toast("Kunne ikke lese fila");}}
+async function fuUpdate(aid,pid,field,val){const a=await sget(aid);if(!a||!a.devs||!a.devs[pid])return;a.devs[pid][field]=val;a.updatedAt=Date.now();await sset(aid,a);closeDeviationApi(aid,pid,{[field]:val});renderFollowup();}
+async function fuClose(aid,pid){const a=await sget(aid);if(!a||!a.devs||!a.devs[pid])return;const d=a.devs[pid];d.status="Lukket";d.verifisert="Verifisert";if(!d.verifisertDato)d.verifisertDato=isoToday();a.updatedAt=Date.now();await sset(aid,a);closeDeviationApi(aid,pid,{status:"Lukket",verifisert:"Verifisert",verifisertDato:d.verifisertDato});toast("Tiltak lukket + verifisert");renderFollowup();}
+
+
+/* ---------- backend-synk (aktiveres kun når /api finnes; ellers ren lokal app) ---------- */
+const JBP={backend:false,me:null,OUTBOX:"jbp_outbox"};
+async function backendInit(){
+  try{const h=await fetch('/api/health',{cache:'no-store'});JBP.backend=h.ok;}catch(e){JBP.backend=false;}
+  if(JBP.backend){
+    try{const r=await fetch('/.auth/me');const j=await r.json();JBP.me=(j&&j.clientPrincipal)||null;}catch(e){}
+    await flushOutbox();await pullMyLogs();
+  }
+  identityBar();
+}
+function isAdminUser(){return !!(JBP.me&&JBP.me.userRoles&&JBP.me.userRoles.includes('admin'));}
+function withMeta(a){try{const r=compute(a);return Object.assign({},a,{meta:{score:r.pct,status:r.status}});}catch(e){return a;}}
+async function pushAudit(a){if(!JBP.backend){return;}try{const res=await fetch('/api/saveLog',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(withMeta(a))});if(!res.ok){queueOutbox(a);}}catch(e){queueOutbox(a);}}
+function queueOutbox(a){try{const q=JSON.parse(localStorage.getItem(JBP.OUTBOX)||'{}');q[a.id]=a;localStorage.setItem(JBP.OUTBOX,JSON.stringify(q));}catch(e){}}
+async function flushOutbox(){let q={};try{q=JSON.parse(localStorage.getItem(JBP.OUTBOX)||'{}');}catch(e){}for(const id of Object.keys(q)){try{const res=await fetch('/api/saveLog',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(withMeta(q[id]))});if(res.ok)delete q[id];}catch(e){}}try{localStorage.setItem(JBP.OUTBOX,JSON.stringify(q));}catch(e){}}
+async function pullMyLogs(){if(!JBP.backend){return;}try{const res=await fetch('/api/myLogs');if(!res.ok)return;const list=await res.json();for(const a of list){if(a&&a.id){const ex=await sget(a.id);if(!ex||((a.updatedAt||0)>=(ex.updatedAt||0)))await sset(a.id,a);}}}catch(e){}}
+async function closeDeviationApi(aid,pid,patch){if(!JBP.backend){return;}try{await fetch('/api/closeDeviation',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({auditId:aid,pointId:pid},patch))});}catch(e){}}
+function identityBar(){let el=document.getElementById('whoami');if(!JBP.backend){if(el)el.remove();return;}if(!el){el=document.createElement('div');el.id='whoami';el.style.cssText='font-size:.72rem;color:var(--muted);padding:6px 16px;background:#f3eef0;border-bottom:1px solid var(--line);text-align:right';document.body.insertBefore(el,document.body.firstChild);}el.innerHTML=JBP.me?('Innlogget: '+esc(JBP.me.userDetails||'')+(isAdminUser()?' \u00b7 admin':'')+' \u00b7 <a href="/.auth/logout">Logg ut</a>'):'<a href="/.auth/login/aad">Logg inn</a>';}
+
+window.go=go;window.start=start;window.openAudit=openAudit;window.finish=finish;window.showText=showText;window.copyText=copyText;window.printReport=printReport;window.finalizeAudit=finalizeAudit;window.exportAll=exportAll;window.triggerImport=triggerImport;window.fuUpdate=fuUpdate;window.fuClose=fuClose;window.removePhoto=removePhoto;
+backendInit();
+go("home");
+</script>
